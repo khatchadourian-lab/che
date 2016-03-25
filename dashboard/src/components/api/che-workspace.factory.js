@@ -57,6 +57,20 @@ export class CheWorkspace {
     );
   }
 
+  getWorkspaceAgent(workspaceId) {
+    let runtimeConfig = this.getRuntimeConfig(workspaceId);
+    let wsAgentUrl = '';
+    console.log('!!!!');
+    console.log(runtimeConfig);
+    if (runtimeConfig) {
+      wsAgentUrl = this.lodash.find(runtimeConfig.links, (link) => {
+        return link.rel === 'wsagent';
+    });
+    }
+
+    return wsAgentUrl;
+  }
+
   /**
    * Add a listener that need to have the onChangeWorkspaces(workspaces: Array) method
    * @param listener a changing listener

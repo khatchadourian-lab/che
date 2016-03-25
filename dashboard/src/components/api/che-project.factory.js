@@ -22,7 +22,7 @@ export class CheProject {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor($resource, $q, cheUser, cheProfile, cheWebsocket) {
+  constructor($resource, $q, cheUser, cheProfile, cheWebsocket, cheWorkspace) {
 
     // keep resource
     this.$resource = $resource;
@@ -32,6 +32,8 @@ export class CheProject {
     this.cheProfile = cheProfile;
 
     this.cheWebsocket = cheWebsocket;
+
+    this.cheWorkspace = cheWorkspace;
 
     this.$q = $q;
 
@@ -63,7 +65,7 @@ export class CheProject {
     this.resolveMap = new Map();
 
     // remote call
-    this.remoteProjectsAPI = this.$resource('/api/ext/project/:workspaceId', {workspaceId: '@id'}, {
+    this.remoteProjectsAPI = this.$resource(':agent/api/ext/project/:workspaceId', {agent : '@agent', workspaceId: '@id'}, {
       import: {method: 'POST', url: '/api/ext/project/:workspaceId/import/:path'},
       create: {method: 'POST', url: '/api/ext/project/:workspaceId?name=:path'},
       details: {method: 'GET', url: '/api/ext/project/:workspaceId/:path'},
@@ -77,6 +79,9 @@ export class CheProject {
     });
   }
 
+  getWorkspaceAgent(workspaceId) {
+    return this.cheWorkspace.getWorkspaceAgent(workspaceId);
+  }
 
   /**
    * Notified when workspaces are updated
@@ -135,7 +140,8 @@ export class CheProject {
    * @param workspace
    */
   fetchProjectsForWorkspaceId(workspaceId) {
-    let promise = this.remoteProjectsAPI.query({workspaceId: workspaceId}).$promise;
+    let agent = this.getWorkspaceAgent(workspaceId);
+    let promise = this.remoteProjectsAPI.query({agent: agent, workspaceId: workspaceId}).$promise;
     let updatedPromise = promise.then((projectReferences) => {
       var remoteProjects = [];
       projectReferences.forEach((projectReference) => {

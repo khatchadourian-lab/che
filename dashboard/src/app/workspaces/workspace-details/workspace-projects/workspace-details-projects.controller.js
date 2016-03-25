@@ -31,12 +31,14 @@ export class WorkspaceDetailsProjectsCtrl {
     let profilePreferences = this.cheAPI.getProfile().getPreferences();
 
     this.profileCreationDate = profilePreferences['che:created'];
+  }
 
+  updateProjects() {
     this.projects = this.cheAPI.getProject().getProjectsByWorkspaceMap().get(this.workspaceId);
-    if (!this.projects) {
-      let promise = this.cheAPI.getProject().fetchProjectsForWorkspaceId(this.workspaceId);
-      promise.then(() => {
-        this.projects = this.cheAPI.getProject().getProjectsByWorkspaceMap().get(this.workspaceId);
+      if (!this.projects) {
+        let promise = this.cheAPI.getProject().fetchProjectsForWorkspaceId(this.workspaceId);
+        promise.then(() => {
+          this.projects = this.cheAPI.getProject().getProjectsByWorkspaceMap().get(this.workspaceId);
       });
     }
   }
