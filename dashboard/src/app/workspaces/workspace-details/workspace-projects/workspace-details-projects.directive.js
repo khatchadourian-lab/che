@@ -38,14 +38,4 @@ export class WorkspaceDetailsProjects {
     this.controllerAs = 'workspaceDetailsProjectsCtrl';
     this.bindToController = true;
   }
-
-  link($scope) {
-    // Watch data of the createProject controller and update project name
-    $scope.$watch('workspaceDetailsCtrl.workspaceDetails.status', (status) => {
-      if (status === 'RUNNING') {
-        $scope.workspaceDetailsProjectsCtrl.updateProjects();
-      }
-    }, true);
-  }
-
 }

@@ -59,13 +59,11 @@ export class CheWorkspace {
 
   getWorkspaceAgent(workspaceId) {
     let runtimeConfig = this.getRuntimeConfig(workspaceId);
-    let wsAgentUrl = '';
-    console.log('!!!!');
-    console.log(runtimeConfig);
+    let wsAgentUrl;
     if (runtimeConfig) {
       wsAgentUrl = this.lodash.find(runtimeConfig.links, (link) => {
         return link.rel === 'wsagent';
-    });
+      });
     }
 
     return wsAgentUrl;
