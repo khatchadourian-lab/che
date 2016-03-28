@@ -22,7 +22,7 @@ export class CheProject {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor($resource, $q, cheUser, cheProfile, cheWebsocket, cheWorkspace) {
+  constructor($resource, $q, cheUser, cheProfile, cheWebsocket, cheWorkspace, $location) {
 
     // keep resource
     this.$resource = $resource;
@@ -64,18 +64,20 @@ export class CheProject {
     // map of resolve per workspace Id/project  <workspaceID:project:projectType> --> Source Estimation
     this.resolveMap = new Map();
 
+    let protocol = $location.protocol() + '://';
+
     // remote call
-    this.remoteProjectsAPI = this.$resource(':agent/api/ext/project/:workspaceId', {agent : '@agent', workspaceId: '@id'}, {
-      import: {method: 'POST', url: '/api/ext/project/:workspaceId/import/:path'},
-      create: {method: 'POST', url: '/api/ext/project/:workspaceId?name=:path'},
-      details: {method: 'GET', url: '/api/ext/project/:workspaceId/:path'},
-      estimate: {method: 'GET', url: '/api/ext/project/:workspaceId/estimate/:path?type=:type'},
-      getPermissions: {method: 'GET', url: '/api/ext/project/:workspaceId/permissions/:path', isArray: true},
-      updatePermissions: {method: 'POST', url: '/api/ext/project/:workspaceId/permissions/:path', isArray: true},
-      rename: {method: 'POST', url: '/api/ext/project/:workspaceId/rename/:path?name=:name'},
-      remove: {method: 'DELETE', url: '/api/ext/project/:workspaceId/:path'},
-      resolve: {method: 'GET', url: '/api/ext/project/:workspaceId/resolve/:path', isArray: true},
-      update: {method: 'PUT', url: '/api/ext/project/:workspaceId/:path'}
+    this.remoteProjectsAPI = this.$resource(protocol + '/:agent/api/ext/project/:workspaceId', {agent : 'agent', workspaceId: '@id'}, {
+      import: {method: 'POST', url: protocol + '/:agent/api/ext/project/:workspaceId/import/:path'},
+      create: {method: 'POST', url: protocol + '/:agent/api/ext/project/:workspaceId?name=:path'},
+      details: {method: 'GET', url:  protocol + '/:agent/api/ext/project/:workspaceId/:path'},
+      estimate: {method: 'GET', url: protocol + '/:agent/api/ext/project/:workspaceId/estimate/:path?type=:type'},
+      getPermissions: {method: 'GET', url: protocol + '/:agent/api/ext/project/:workspaceId/permissions/:path', isArray: true},
+      updatePermissions: {method: 'POST', url: protocol + '/:agent/api/ext/project/:workspaceId/permissions/:path', isArray: true},
+      rename: {method: 'POST', url: protocol + '/:agent/api/ext/project/:workspaceId/rename/:path?name=:name'},
+      remove: {method: 'DELETE', url: protocol + '/:agent/api/ext/project/:workspaceId/:path'},
+      resolve: {method: 'GET', url: protocol + '/:agent/api/ext/project/:workspaceId/resolve/:path', isArray: true},
+      update: {method: 'PUT', url: protocol + '/:agent/api/ext/project/:workspaceId/:path'}
     });
   }
 
@@ -221,7 +223,8 @@ export class CheProject {
     if ((!data.type || data.type.length === 0) && data.description) {
       delete(data.description);
     }
-    let promise = this.remoteProjectsAPI.import({workspaceId: workspaceId, path: path}, data).$promise;
+    let agent = this.getWorkspaceAgent(workspaceId);
+    let promise = this.remoteProjectsAPI.import({agent: agent, workspaceId: workspaceId, path: path}, data).$promise;
     // update projects as well
     promise.then(this.fetchProjectsForWorkspaceId(workspaceId));
     return promise;
@@ -250,7 +253,8 @@ export class CheProject {
    * @returns {$promise|*|T.$promise}
    */
   fetchPermissions(workspaceId, path) {
-    let promise = this.remoteProjectsAPI.getPermissions({workspaceId: workspaceId, path: path}).$promise;
+    let agent = this.getWorkspaceAgent(workspaceId);
+    let promise = this.remoteProjectsAPI.getPermissions({agent: agent, workspaceId: workspaceId, path: path}).$promise;
 
     let storePermissionsPromise = promise.then((permissions) => {
 
@@ -350,7 +354,8 @@ export class CheProject {
 
 
   updatePermissions(workspaceId, path, data) {
-    let promise = this.remoteProjectsAPI.updatePermissions({workspaceId: workspaceId, path: path}, data).$promise;
+    let agent = this.getWorkspaceAgent(workspaceId);
+    let promise = this.remoteProjectsAPI.updatePermissions({agent: agent, workspaceId: workspaceId, path: path}, data).$promise;
     return promise;
 
   }
@@ -407,7 +412,8 @@ export class CheProject {
   fetchProjectDetails(workspaceId, projectPath) {
     //TODO why we cannot use project path
     var projectName = projectPath[0] === '/' ? projectPath.slice(1) : projectPath;
-    let promise = this.remoteProjectsAPI.details({workspaceId: workspaceId, path: projectName}).$promise;
+    let agent = this.getWorkspaceAgent(workspaceId);
+    let promise = this.remoteProjectsAPI.details({agent: agent, workspaceId: workspaceId, path: projectName}).$promise;
 
     // check if it was OK or not
     let parsedResultPromise = promise.then((projectDetails) => {
@@ -437,7 +443,9 @@ export class CheProject {
     if(newProjectDetails.workspaceId){
       delete(newProjectDetails.workspaceId);
     }
+    let agent = this.getWorkspaceAgent(workspaceId);
     let promiseUpdateProjectDetails = this.remoteProjectsAPI.update({
+      agent: agent,
       workspaceId: workspaceId,
       path: path
     }, newProjectDetails).$promise;
@@ -452,13 +460,15 @@ export class CheProject {
   }
 
   rename(workspaceId, projectName, newProjectName) {
-    let promise = this.remoteProjectsAPI.rename({workspaceId: workspaceId, path: projectName, name: newProjectName}, null).$promise;
+    let agent = this.getWorkspaceAgent(workspaceId);
+    let promise = this.remoteProjectsAPI.rename({agent: agent, workspaceId: workspaceId, path: projectName, name: newProjectName}, null).$promise;
 
     return promise;
   }
 
   remove(workspaceId, projectName) {
-    let promiseDelete = this.remoteProjectsAPI.remove({workspaceId: workspaceId, path: projectName}).$promise;
+    let agent = this.getWorkspaceAgent(workspaceId);
+    let promiseDelete = this.remoteProjectsAPI.remove({agent: agent, workspaceId: workspaceId, path: projectName}).$promise;
     // update list of projects
     let promiseUpdateProjects = promiseDelete.then(() => {
       this.fetchProjectsForWorkspaceId(workspaceId);
@@ -477,7 +487,8 @@ export class CheProject {
    */
   fetchEstimate(workspaceId, projectPath, projectType) {
       let projectName = projectPath[0] === '/' ? projectPath.slice(1) : projectPath;
-      let promise = this.remoteProjectsAPI.estimate({workspaceId: workspaceId, path: projectName, type: projectType}).$promise;
+      let agent = this.getWorkspaceAgent(workspaceId);
+      let promise = this.remoteProjectsAPI.estimate({agent: agent, workspaceId: workspaceId, path: projectName, type: projectType}).$promise;
       let parsedResultPromise = promise.then((estimate) => {
         if (estimate) {
           this.estimateMap.set(workspaceId + projectName + projectType, estimate);
@@ -503,7 +514,8 @@ export class CheProject {
    */
   fetchResolve(workspaceId, projectPath) {
     let projectName = projectPath[0] === '/' ? projectPath.slice(1) : projectPath;
-    let promise = this.remoteProjectsAPI.resolve({workspaceId: workspaceId, path: projectName}).$promise;
+    let agent = this.getWorkspaceAgent(workspaceId);
+    let promise = this.remoteProjectsAPI.resolve({agent: agent, workspaceId: workspaceId, path: projectName}).$promise;
     let parsedResultPromise = promise.then((resolve) => {
       if (resolve) {
         this.resolveMap.set(workspaceId + projectName, resolve);

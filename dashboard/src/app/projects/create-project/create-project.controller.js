@@ -825,10 +825,15 @@ export class CreateProjectCtrl {
           this.createProjectInWorkspace(this.workspaceSelected.id, this.projectName, this.importProjectData, bus);
         });
       }, (error) => {
-        if (error.data.message) {
-          this.getCreationSteps()[this.getCurrentProgressStep()].logs = error.data.message;
+        if (error.status === 404) {
+          let bus = this.cheAPI.getWebsocket().getBus(this.workspaceSelected.id);
+          this.startWorkspace(bus, this.workspaceSelected);
+        } else {
+          if (error.data.message) {
+            this.getCreationSteps()[this.getCurrentProgressStep()].logs = error.data.message;
+          }
+          this.getCreationSteps()[this.getCurrentProgressStep()].hasError = true;
         }
-        this.getCreationSteps()[this.getCurrentProgressStep()].hasError = true;
       });
     }
     // do we have projects ?

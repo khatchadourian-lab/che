@@ -21,20 +21,26 @@ export class CheGit {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor($resource, lodash) {
+  constructor($resource, lodash, $location, cheWorkspace) {
 
     // keep resource
     this.$resource = $resource;
     this.lodash = lodash;
+    this.cheWorkspace = cheWorkspace;
 
     this.remoteGitUrlArraysMap = new Map();
     this.localGitUrlsMap = new Map();
 
+    let protocol = $location.protocol() + '://';
     // remote call
-    this.remoteGitAPI = this.$resource('/api/ext/git', {}, {
-      getLocalUrl: {method: 'GET', url: '/api/ext/git/:workspaceId/read-only-url?projectPath=:path', isArray: false},
-      getRemoteUrlArray: {method: 'POST', url: '/api/ext/git/:workspaceId/remote-list?projectPath=:path', isArray: true}
+    this.remoteGitAPI = this.$resource(protocol + '/:agent/api/ext/git', {agent : 'agent'}, {
+      getLocalUrl: {method: 'GET', url: protocol + '/:agent/api/ext/git/:workspaceId/read-only-url?projectPath=:path', isArray: false},
+      getRemoteUrlArray: {method: 'POST', url: protocol + '/:agent/api/ext/git/:workspaceId/remote-list?projectPath=:path', isArray: true}
     });
+  }
+
+  getWorkspaceAgent(workspaceId) {
+    return this.cheWorkspace.getWorkspaceAgent(workspaceId);
   }
 
   /**
@@ -44,6 +50,7 @@ export class CheGit {
    */
   fetchLocalUrl(workspaceId, projectPath) {
     let promise = this.remoteGitAPI.getLocalUrl({
+      agent: this.getWorkspaceAgent(workspaceId),
       workspaceId: workspaceId,
       path: projectPath
     }, null).$promise;
@@ -76,6 +83,7 @@ export class CheGit {
     var data = {remote: null, verbose: true, attributes: {}};
 
     let promise = this.remoteGitAPI.getRemoteUrlArray({
+      agent: this.getWorkspaceAgent(workspaceId),
       workspaceId: workspaceId,
       path: projectPath
     }, data).$promise;

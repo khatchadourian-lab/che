@@ -37,29 +37,39 @@ export class ProjectDetailsCtrl {
     this.workspacesById = cheAPI.getWorkspace().getWorkspacesById();
     cheAPI.getWorkspace().fetchWorkspaces();
 
+    if (!cheAPI.getWorkspace().getRuntimeConfig(this.workspaceId)) {
+      cheAPI.getWorkspace().fetchRuntimeConfig(this.workspaceId).then(() => {
+        this.fetchProjectDetails()
+      }, (error) => {
+        if (error.status === 404) {
+          this.loading = false;
+          this.noWorkspaceRuntime = true;
+        } else {
+          this.cheNotification.showError(error.data.message ? error.data.message : 'Failed to get runtime of the project workspace.');
+          this.$log.log('error', error);
+        }
+      });
+    } else {
+      this.fetchProjectDetails();
+    }
+  }
+
+  fetchProjectDetails() {
     if (!this.cheAPI.getProject().getProjectDetailsByKey(this.workspaceId, this.projectPath)) {
       let promise = this.cheAPI.getProject().fetchProjectDetails(this.workspaceId, this.projectPath);
-
       promise.then(() => {
         this.updateProjectDetails();
       }, (error) => {
         if (error.status === 304) {
           this.updateProjectDetails();
-        } else if (error.status === 503) {
-          this.missingWorkspace = true;
-          this.loading = false;
         } else {
           this.loading = false;
           this.invalidProject = error.statusText + error.status;
         }
-      });
+    });
     } else {
       this.updateProjectDetails();
     }
-
-    //this.toolbarIcons = [{name: 'favorite', font: 'material-design icon-ic_star_24px'},
-    //  {name: 'share', font: 'material-design icon-ic_share_24px'}
-    //];
   }
 
   /**
