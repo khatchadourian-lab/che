@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.che.jdt.rest;
 
+import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.ide.ext.java.shared.Jar;
 import org.eclipse.che.ide.ext.java.shared.JarEntry;
 import org.eclipse.che.ide.ext.java.shared.OpenDeclarationDescriptor;
@@ -60,6 +61,15 @@ public class JavaNavigationService {
             throws JavaModelException {
         IJavaProject project = MODEL.getJavaProject(projectPath);
         return navigation.findDeclaration(project, fqn, offset);
+    }
+
+    @GET
+    @Path("find-type")
+    @Produces("application/json")
+    public OpenDeclarationDescriptor findType(@QueryParam("projectpath") String projectPath,
+                                                     @QueryParam("fqn") String fqn) throws JavaModelException, NotFoundException {
+        IJavaProject project = MODEL.getJavaProject(projectPath);
+        return navigation.findType(project, fqn);
     }
 
     @GET
