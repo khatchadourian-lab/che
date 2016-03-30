@@ -18,7 +18,6 @@ import org.eclipse.che.api.core.model.machine.MachineStatus;
 import org.eclipse.che.api.core.model.workspace.WorkspaceConfig;
 import org.eclipse.che.api.core.model.workspace.WorkspaceStatus;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
-import org.eclipse.che.api.core.rest.permission.PermissionManager;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.machine.server.MachineManager;
@@ -35,7 +34,6 @@ import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceRuntimeImpl;
-import org.eclipse.che.api.workspace.shared.Constants;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
@@ -118,8 +116,6 @@ public class WorkspaceServiceTest {
     private MachineManager     machineManager;
     @Mock
     private WorkspaceValidator validator;
-    @Mock
-    private PermissionManager  permissionManager;
     @InjectMocks
     private WorkspaceService   service;
 
@@ -275,7 +271,6 @@ public class WorkspaceServiceTest {
 
         assertEquals(response.getStatusCode(), 200);
         assertEquals(new WorkspaceImpl(unwrapDto(response, WorkspaceDto.class)), workspace);
-        verify(permissionManager).checkPermission(eq(Constants.START_WORKSPACE), any(), any());
         verify(wsManager).startWorkspace(workspace.getId(), workspace.getConfig().getDefaultEnv(), null);
     }
 
@@ -298,7 +293,6 @@ public class WorkspaceServiceTest {
 
         assertEquals(response.getStatusCode(), 200);
         verify(validator).validateConfig(any());
-        verify(permissionManager).checkPermission(eq(Constants.START_WORKSPACE), any(), any(), any());
     }
 
     @Test
@@ -315,7 +309,6 @@ public class WorkspaceServiceTest {
 
         assertEquals(response.getStatusCode(), 200);
         assertEquals(new WorkspaceImpl(unwrapDto(response, WorkspaceDto.class)), workspace);
-        verify(permissionManager).checkPermission(eq(Constants.START_WORKSPACE), any(), any());
         verify(wsManager).recoverWorkspace(workspace.getId(), workspace.getConfig().getDefaultEnv(), null);
     }
 
