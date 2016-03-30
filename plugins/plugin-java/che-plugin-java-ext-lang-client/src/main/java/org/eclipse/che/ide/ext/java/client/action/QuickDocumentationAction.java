@@ -13,10 +13,10 @@ package org.eclipse.che.ide.ext.java.client.action;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.api.analytics.client.logger.AnalyticsEventLogger;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.editor.EditorAgent;
 import org.eclipse.che.ide.api.editor.EditorPartPresenter;
+import org.eclipse.che.ide.api.filetypes.FileTypeRegistry;
 import org.eclipse.che.ide.ext.java.client.JavaLocalizationConstant;
 import org.eclipse.che.ide.ext.java.client.JavaResources;
 import org.eclipse.che.ide.ext.java.client.documentation.QuickDocumentation;
@@ -31,22 +31,22 @@ public class QuickDocumentationAction extends JavaEditorAction {
 
     private QuickDocumentation quickDocumentation;
 
-    private final AnalyticsEventLogger eventLogger;
-
     @Inject
     public QuickDocumentationAction(JavaLocalizationConstant constant,
                                     QuickDocumentation quickDocumentation,
                                     EditorAgent editorAgent,
-                                    AnalyticsEventLogger eventLogger,
-                                    JavaResources resources) {
-        super(constant.actionQuickdocTitle(), constant.actionQuickdocDescription(), resources.quickDocumentation(), editorAgent);
+                                    JavaResources resources,
+                                    FileTypeRegistry fileTypeRegistry) {
+        super(constant.actionQuickdocTitle(),
+              constant.actionQuickdocDescription(),
+              resources.quickDocumentation(),
+              editorAgent,
+              fileTypeRegistry);
         this.quickDocumentation = quickDocumentation;
-        this.eventLogger = eventLogger;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        eventLogger.log(this);
         EditorPartPresenter activeEditor = editorAgent.getActiveEditor();
         if(activeEditor == null){
             return;
