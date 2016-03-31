@@ -20,8 +20,6 @@ import javax.validation.constraints.NotNull;
  * @author Valeriy Svydenko
  */
 public interface DropDownHeaderWidget {
-    /** Sets the action delegate. */
-    void setDelegate(ActionDelegate delegate);
 
     /** returns title of the selected element* */
     @Nullable
@@ -34,9 +32,5 @@ public interface DropDownHeaderWidget {
      *         title of the selected element
      */
     void selectElement(@NotNull String title);
-
-    interface ActionDelegate {
-        void onSelect();
-    }
 
 }

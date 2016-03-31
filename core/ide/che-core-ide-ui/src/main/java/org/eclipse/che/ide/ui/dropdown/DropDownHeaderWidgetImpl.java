@@ -72,7 +72,6 @@ public class DropDownHeaderWidgetImpl extends Composite implements ClickHandler,
     private final DropDownListMenu dropDownListMenu;
     private final String           listId;
     private       String           selectedName;
-    private       ActionDelegate   delegate;
 
     @AssistedInject
     public DropDownHeaderWidgetImpl(DropDownListMenu dropDownListMenu, @NotNull @Assisted String listId) {
@@ -95,16 +94,9 @@ public class DropDownHeaderWidgetImpl extends Composite implements ClickHandler,
 
     /** {@inheritDoc} */
     @Override
-    public void setDelegate(@NotNull ActionDelegate delegate) {
-        this.delegate = delegate;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void selectElement(@NotNull String title) {
         selectedName = title;
         selectedElementName.setText(title);
-        delegate.onSelect();
     }
 
     /** {@inheritDoc} */
