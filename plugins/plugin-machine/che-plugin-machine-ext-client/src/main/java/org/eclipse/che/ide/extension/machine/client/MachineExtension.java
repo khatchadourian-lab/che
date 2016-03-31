@@ -47,6 +47,7 @@ import org.eclipse.che.ide.extension.machine.client.machine.console.MachineConso
 import org.eclipse.che.ide.extension.machine.client.outputspanel.OutputsContainerPresenter;
 import org.eclipse.che.ide.extension.machine.client.processes.ConsolesPanelPresenter;
 import org.eclipse.che.ide.extension.machine.client.processes.NewTerminalAction;
+import org.eclipse.che.ide.extension.machine.client.targets.EditTargetsAction;
 import org.eclipse.che.ide.ui.toolbar.ToolbarPresenter;
 import org.eclipse.che.ide.util.input.KeyCodeMap;
 
@@ -119,7 +120,8 @@ public class MachineExtension {
                                 SwitchPerspectiveAction switchPerspectiveAction,
                                 CreateSnapshotAction createSnapshotAction,
                                 RunCommandAction runCommandAction,
-                                NewTerminalAction newTerminalAction) {
+                                NewTerminalAction newTerminalAction,
+                                EditTargetsAction editTargetsAction) {
         final DefaultActionGroup mainMenu = (DefaultActionGroup)actionManager.getAction(GROUP_MAIN_MENU);
 
         final DefaultActionGroup workspaceMenu = (DefaultActionGroup)actionManager.getAction(GROUP_WORKSPACE);
@@ -129,6 +131,8 @@ public class MachineExtension {
         actionManager.registerAction("editCommands", editCommandsAction);
         actionManager.registerAction("selectCommandAction", selectCommandAction);
         actionManager.registerAction("executeSelectedCommand", executeSelectedCommandAction);
+
+        actionManager.registerAction("editTargets", editTargetsAction);
 
         //add actions in machine menu
         final DefaultActionGroup machineMenu = new DefaultActionGroup(localizationConstant.mainMenuMachine(), true, actionManager);
@@ -147,6 +151,7 @@ public class MachineExtension {
         runMenu.add(newTerminalAction, FIRST);
         runMenu.addSeparator();
         runMenu.add(editCommandsAction);
+        runMenu.add(editTargetsAction);
 
         workspaceMenu.add(stopWorkspaceAction);
 

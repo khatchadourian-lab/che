@@ -55,6 +55,12 @@ public interface MachineLocalizationConstant extends Messages {
     @Key("control.editCommands.description")
     String editCommandsControlDescription();
 
+    @Key("control.editTargets")
+    String editTargets();
+
+    @Key("control.editTargets.description")
+    String editTargetsDescription();
+
     @Key("control.clearMachineConsole.text")
     String clearConsoleControlTitle();
 
@@ -192,6 +198,10 @@ public interface MachineLocalizationConstant extends Messages {
 
     @Key("view.editCommands.saveChanges.discard")
     String editCommandsSaveChangesDiscard();
+
+    /* Targets view */
+    @Key("view.targets.title")
+    String targetsViewTitle();
 
 
     @Key("process.active")
