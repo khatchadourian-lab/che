@@ -313,7 +313,7 @@ public class ProjectService extends Service {
                                                                      ServerException,
                                                                      NotFoundException,
                                                                      BadRequestException {
-        projectManager.importProject(path, sourceStorage);
+        projectManager.importProject(path, sourceStorage, force);
     }
 
     @POST
