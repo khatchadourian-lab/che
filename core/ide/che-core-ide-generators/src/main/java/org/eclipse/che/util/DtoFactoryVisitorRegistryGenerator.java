@@ -13,6 +13,8 @@ package org.eclipse.che.util;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.che.ide.dto.ClientDtoFactoryVisitor;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurationBuilder.*;
+import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurationBuilder.getConfigurationBuilder;
 
 /**
  * Generates {DtoFactoryVisitorRegistry} class source.
@@ -30,6 +32,7 @@ import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurati
  * @author Artem Zatsarynnyi
  */
 public class DtoFactoryVisitorRegistryGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(DtoFactoryVisitorRegistryGenerator.class);
 
     /**
      * Path of the output class, it definitely should already exits. To ensure proper config.
@@ -60,9 +63,9 @@ public class DtoFactoryVisitorRegistryGenerator {
             }
 
             File rootFolder = new File(rootDirPath);
-            System.out.println(" ------------------------------------------------------------------------ ");
-            System.out.println(String.format("Searching for DTO"));
-            System.out.println(" ------------------------------------------------------------------------ ");
+            LOG.info(" ------------------------------------------------------------------------ ");
+            LOG.info("Searching for DTO");
+            LOG.info(" ------------------------------------------------------------------------ ");
 
             // find all DtoFactoryVisitors
             findDtoFactoryVisitors();
@@ -86,9 +89,9 @@ public class DtoFactoryVisitorRegistryGenerator {
         int i = 0;
         for (Class clazz : classes) {
             dtoFactoryVisitors.put(clazz.getCanonicalName(), "provider_" + i++);
-            System.out.println(String.format("New DtoFactoryVisitor found: %s", clazz.getCanonicalName()));
+            LOG.info("New DtoFactoryVisitor found: " + clazz.getCanonicalName());
         }
-        System.out.println(String.format("Found: %d DtoFactoryVisitor(s)", dtoFactoryVisitors.size()));
+        LOG.info("Found: {} DtoFactoryVisitor(s)", dtoFactoryVisitors.size());
     }
 
     /**

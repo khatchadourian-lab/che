@@ -13,6 +13,7 @@ package org.eclipse.che.util;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.che.ide.api.extension.Extension;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurationBuilder.*;
+import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurationBuilder.getConfigurationBuilder;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Generates {ExtensionManager} class source
@@ -31,6 +33,7 @@ import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurati
  * @author <a href="mailto:nzamosenchuk@exoplatform.com">Nikolay Zamosenchuk</a>
  */
 public class ExtensionManagerGenerator {
+    private static final Logger LOG = getLogger(ExtensionManagerGenerator.class);
 
     /** Annotation to look for. */
     protected static final String EXT_ANNOTATION = "@Extension";
@@ -67,9 +70,9 @@ public class ExtensionManagerGenerator {
                 }
             }
             File rootFolder = new File(rootDirPath);
-            System.out.println(" ------------------------------------------------------------------------ ");
-            System.out.println(String.format("Searching for Extensions in %s", rootFolder.getAbsolutePath()));
-            System.out.println(" ------------------------------------------------------------------------ ");
+            LOG.info(" ------------------------------------------------------------------------ ");
+            LOG.info("Searching for Extensions in " + rootFolder.getAbsolutePath());
+            LOG.info(" ------------------------------------------------------------------------ ");
             // find all Extension FQNs
             findExtensions();
             generateExtensionManager(rootFolder);
@@ -190,8 +193,8 @@ public class ExtensionManagerGenerator {
         Set<Class<?>> classes = reflection.getTypesAnnotatedWith(Extension.class);
         for (Class clazz : classes) {
             EXTENSIONS_FQN.put(clazz.getCanonicalName(), clazz.getSimpleName());
-            System.out.println(String.format("New Extension Found: %s", clazz.getCanonicalName()));
+            LOG.info("New Extension Found: " + clazz.getCanonicalName());
         }
-        System.out.println(String.format("Found: %d extensions", EXTENSIONS_FQN.size()));
+        LOG.info("Found: {} extensions", EXTENSIONS_FQN.size());
     }
 }

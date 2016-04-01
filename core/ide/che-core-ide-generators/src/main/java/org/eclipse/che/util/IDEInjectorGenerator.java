@@ -13,6 +13,8 @@ package org.eclipse.che.util;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurationBuilder.*;
+import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurationBuilder.getConfigurationBuilder;
 
 /**
  * This class looks for all the Gin Modules annotated with ExtensionGinModule annotation
@@ -29,6 +31,7 @@ import static org.eclipse.che.util.IgnoreUnExistedResourcesReflectionConfigurati
  * @author <a href="mailto:nzamosenchuk@exoplatform.com">Nikolay Zamosenchuk</a>
  */
 public class IDEInjectorGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(IDEInjectorGenerator.class);
 
     /** Set containing all the FQNs of GinModules */
     public static final Set<String> EXTENSIONS_FQN = new HashSet<String>();
@@ -63,9 +66,9 @@ public class IDEInjectorGenerator {
                 }
             }
             File rootFolder = new File(rootDirPath);
-            System.out.println(" ------------------------------------------------------------------------ ");
-            System.out.println(String.format("Searching for GinModules in %s", rootFolder.getAbsolutePath()));
-            System.out.println(" ------------------------------------------------------------------------ ");
+            LOG.info(" ------------------------------------------------------------------------ ");
+            LOG.info("Searching for GinModules in " + rootFolder.getAbsolutePath());
+            LOG.info(" ------------------------------------------------------------------------ ");
             // find all Extension FQNs
             findGinModules(rootFolder);
             generateExtensionManager(rootFolder);
@@ -154,9 +157,9 @@ public class IDEInjectorGenerator {
         Set<Class<?>> classes = reflection.getTypesAnnotatedWith(ExtensionGinModule.class);
         for (Class clazz : classes) {
             EXTENSIONS_FQN.add(clazz.getCanonicalName());
-            System.out.println(String.format("New Gin Module Found: %s", clazz.getCanonicalName()));
+            LOG.info("New Gin Module Found: " + clazz.getCanonicalName());
         }
-        System.out.println(String.format("Found: %d Gin Modules", EXTENSIONS_FQN.size()));
+        LOG.info(String.format("Found: %d Gin Modules", EXTENSIONS_FQN.size()));
     }
 
 }
