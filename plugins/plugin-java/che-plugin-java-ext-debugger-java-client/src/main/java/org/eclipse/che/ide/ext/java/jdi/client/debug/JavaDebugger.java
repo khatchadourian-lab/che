@@ -26,7 +26,6 @@ import org.eclipse.che.api.promises.client.js.JsPromise;
 import org.eclipse.che.api.promises.client.js.JsPromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.app.CurrentProject;
 import org.eclipse.che.ide.api.filetypes.FileTypeRegistry;
 import org.eclipse.che.ide.api.project.tree.VirtualFile;
 import org.eclipse.che.ide.debug.Breakpoint;
@@ -36,7 +35,6 @@ import org.eclipse.che.ide.debug.DebuggerManager;
 import org.eclipse.che.ide.debug.DebuggerObservable;
 import org.eclipse.che.ide.debug.DebuggerObserver;
 import org.eclipse.che.ide.dto.DtoFactory;
-import org.eclipse.che.ide.ext.java.client.projecttree.JavaSourceFolderUtil;
 import org.eclipse.che.ide.ext.java.jdi.client.JavaRuntimeExtension;
 import org.eclipse.che.ide.ext.java.jdi.client.fqn.FqnResolver;
 import org.eclipse.che.ide.ext.java.jdi.client.fqn.FqnResolverFactory;
@@ -66,7 +64,6 @@ import org.eclipse.che.ide.websocket.rest.exceptions.ServerException;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +91,7 @@ public class JavaDebugger implements Debugger, DebuggerObservable {
     private final EventBus                      eventBus;
     private final FqnResolverFactory            fqnResolverFactory;
     private final AppContext                    appContext;
-    private final JavaDebuggerFileHandler       javaDebuggerFileHandler;
+    private final JavaDebuggerFileHandler       fileHandler;
     private final DebuggerManager               debuggerManager;
 
     /** Channel identifier to receive events from debugger over WebSocket. */
@@ -118,7 +115,7 @@ public class JavaDebugger implements Debugger, DebuggerObservable {
                         EventBus eventBus,
                         FqnResolverFactory fqnResolverFactory,
                         AppContext appContext,
-                        JavaDebuggerFileHandler javaDebuggerFileHandler,
+                        JavaDebuggerFileHandler fileHandler,
                         DebuggerManager debuggerManager,
                         FileTypeRegistry fileTypeRegistry) {
         this.service = service;
@@ -127,7 +124,7 @@ public class JavaDebugger implements Debugger, DebuggerObservable {
         this.eventBus = eventBus;
         this.fqnResolverFactory = fqnResolverFactory;
         this.appContext = appContext;
-        this.javaDebuggerFileHandler = javaDebuggerFileHandler;
+        this.fileHandler = fileHandler;
         this.debuggerManager = debuggerManager;
         this.observers = new ArrayList<>();
         this.fileTypeRegistry = fileTypeRegistry;
@@ -246,29 +243,24 @@ public class JavaDebugger implements Debugger, DebuggerObservable {
             final Location fLocation = location;
             if (location != null) {
                 currentLocation = location;
-                javaDebuggerFileHandler.openFile(resolveFilePathByLocation(location),
-                                                 location.getClassName(),
-                                                 location.getLineNumber(),
-                                                 new AsyncCallback<VirtualFile>() {
-                                                     @Override
-                                                     public void onFailure(Throwable caught) {
-                                                         for (DebuggerObserver observer : observers) {
-                                                             observer.onBreakpointStopped(fLocation.getClassName(),
-                                                                                          fLocation.getClassName(),
-                                                                                          fLocation.getLineNumber());
-                                                         }
-                                                     }
+                fileHandler.openFile(location, appContext.getCurrentProject().getProjectConfig(), new AsyncCallback<VirtualFile>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        onBreakPointStopped(fLocation.getClassName(), fLocation.getClassName(), fLocation.getLineNumber());
+                    }
 
-                                                     @Override
-                                                     public void onSuccess(VirtualFile result) {
-                                                         for (DebuggerObserver observer : observers) {
-                                                             observer.onBreakpointStopped(result.getPath(),
-                                                                                          fLocation.getClassName(),
-                                                                                          fLocation.getLineNumber());
-                                                         }
-                                                     }
-                                                 });
+                    @Override
+                    public void onSuccess(VirtualFile result) {
+                        onBreakPointStopped(result.getPath(), fLocation.getClassName(), fLocation.getLineNumber());
+                    }
+                });
             }
+        }
+    }
+
+    private void onBreakPointStopped(String filePath, String className, int lineNumber) {
+        for (DebuggerObserver observer : observers) {
+            observer.onBreakpointStopped(filePath, className, lineNumber);
         }
     }
 
@@ -279,40 +271,9 @@ public class JavaDebugger implements Debugger, DebuggerObservable {
      * <li>etc</li>
      */
     private void onBreakpointActivated(Location location) {
-        List<String> filePaths = resolveFilePathByLocation(location);
-        for (String filePath : filePaths) {
-            for (DebuggerObserver observer : observers) {
-                observer.onBreakpointActivated(filePath, location.getLineNumber() - 1);
-            }
+        for (DebuggerObserver observer : observers) {
+            observer.onBreakpointActivated(location.getClassName(), location.getLineNumber() - 1);
         }
-    }
-
-    /**
-     * Create file path from {@link Location}.
-     *
-     * @param location
-     *         location of class
-     * @return file path
-     */
-    @NotNull
-    private List<String> resolveFilePathByLocation(@NotNull Location location) {
-        CurrentProject currentProject = appContext.getCurrentProject();
-
-        if (currentProject == null) {
-            return Collections.emptyList();
-        }
-
-        String pathSuffix = location.getClassName().replace(".", "/") + ".java";
-
-        List<String> sourceFolders = JavaSourceFolderUtil.getSourceFolders(currentProject);
-        List<String> filePaths = new ArrayList<>(sourceFolders.size() + 1);
-
-        for (String sourceFolder : sourceFolders) {
-            filePaths.add(sourceFolder + pathSuffix);
-        }
-        filePaths.add(location.getClassName());
-
-        return filePaths;
     }
 
     private void startCheckingEvents() {
