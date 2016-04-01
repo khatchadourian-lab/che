@@ -265,6 +265,13 @@ public class ChangedListViewImpl extends Window implements ChangedListView {
                 allPaths.add(path);
             }
         }
+        List<String> commonPaths = new ArrayList<>();
+        commonPaths.add("plugins");
+        commonPaths.add("plugins/plugin-java");
+        commonPaths.add("plugins/plugin-java/che-plugin-java-ext-jdt");
+        allPaths.add("plugins");
+        allPaths.add("plugins/plugin-java");
+        allPaths.add("plugins/plugin-java/che-plugin-java-ext-jdt");
         String commonPath = getCommonPath(allPaths);
         boolean needToAddCommonFolder = !commonPath.isEmpty() && !allPaths.contains(commonPath);
         if (needToAddCommonFolder) {
@@ -294,9 +301,25 @@ public class ChangedListViewImpl extends Window implements ChangedListView {
             }
 
             //Set collected files to new folders that they are related to and add them to prepared earlier map
-            if (needToAddCommonFolder && commonPathDirectoriesAmount == i) {
-                preparedNodes.put(commonPath, new ChangedFolderNode(commonPath, nodesResources));
-            } else {
+//            if (needToAddCommonFolder && commonPathDirectoriesAmount == i) {
+//                preparedNodes.put(commonPath, new ChangedFolderNode(commonPath, nodesResources));
+//            } else {
+//                for (String path : currentChildNodes.keySet()) {
+//                    Node folder = new ChangedFolderNode(getFolders(allPaths, path), nodesResources);
+//                    folder.setChildren(currentChildNodes.get(path));
+//                    preparedNodes.put(path, folder);
+//                }
+//            }
+            boolean flag = false;
+            int commonPathDirectories = 0;
+            for (String commonPath1 : commonPaths){
+                if (Path.valueOf(commonPath1).segmentCount() == i) {
+                    preparedNodes.put(commonPath1, new ChangedFolderNode(getFolders(allPaths, commonPath1), nodesResources));
+                    commonPathDirectories = Path.valueOf(commonPath1).segmentCount();
+                    flag = true;
+                }
+            }
+            if (!flag) {
                 for (String path : currentChildNodes.keySet()) {
                     Node folder = new ChangedFolderNode(getFolders(allPaths, path), nodesResources);
                     folder.setChildren(currentChildNodes.get(path));
@@ -317,7 +340,7 @@ public class ChangedListViewImpl extends Window implements ChangedListView {
                     continue;
                 }
                 Collections.sort(nodesToNest, new NameComparator());
-                if (!needToAddCommonFolder || commonPathDirectoriesAmount != i) {
+                if (!flag || commonPathDirectories != i) {
                     nodesToNest.addAll(currentChildNodes.get(parentPath));
                 }
                 if (parentPath.isEmpty()) {
@@ -362,5 +385,14 @@ public class ChangedListViewImpl extends Window implements ChangedListView {
             }
         }
         return commonPath.toString();
+//        Collections.sort();
+//        for (String currentPath : paths) {
+//            Path commonPath = Path.valueOf(currentPath);
+//            int segmentCount = commonPath.segmentCount();
+//            for (int i = 1; i < segmentCount; i++) {
+//                String path = commonPath.removeLastSegments(segmentCount - i).toString();
+//
+//            }
+//        }
     }
 }
