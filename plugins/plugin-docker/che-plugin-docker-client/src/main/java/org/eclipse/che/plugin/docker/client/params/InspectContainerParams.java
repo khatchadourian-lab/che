@@ -8,26 +8,24 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.plugin.docker.client.json;
+package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * @author andrew00x
+ * Arguments holder for {@code inspectContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ *
+ * @author Mykola Morhun
  */
-public class ContainerCommited {
-    private String id;
+public class InspectContainerParams {
+    /** id of container */
+    private String container;
 
-    public String getId() {
-        return id;
+    public InspectContainerParams withContainer(String container) {
+        this.container = container;
+        return this;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getContainer() {
+        return container;
     }
 
-    @Override
-    public String toString() {
-        return "ContainerCommited{" +
-               "id='" + id + '\'' +
-               '}';
-    }
 }

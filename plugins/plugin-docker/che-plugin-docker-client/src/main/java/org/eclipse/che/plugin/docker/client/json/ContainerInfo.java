@@ -26,7 +26,7 @@ public class ContainerInfo {
     private ContainerState  state;
     private String          image;
     private NetworkSettings networkSettings;
-    private String          resolvConfPath;
+    private String          resolveConfPath;
     private HostConfig      hostConfig;
     private String          driver;
     private String          execDriver;
@@ -38,6 +38,7 @@ public class ContainerInfo {
     private String[]        execIDs;
     private int             restartCount;
     private String          logPath;
+    private Node            node;
 
     private Map<String, String>  volumes   = new HashMap<>();
     private Map<String, Boolean> volumesRW = new HashMap<>();
@@ -106,12 +107,12 @@ public class ContainerInfo {
         this.networkSettings = networkSettings;
     }
 
-    public String getResolvConfPath() {
-        return resolvConfPath;
+    public String getResolveConfPath() {
+        return resolveConfPath;
     }
 
-    public void setResolvConfPath(String resolvConfPath) {
-        this.resolvConfPath = resolvConfPath;
+    public void setResolveConfPath(String resolveConfPath) {
+        this.resolveConfPath = resolveConfPath;
     }
 
     public Map<String, String> getVolumes() {
@@ -226,6 +227,14 @@ public class ContainerInfo {
         this.logPath = logPath;
     }
 
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
     @Override
     public String toString() {
         return "ContainerInfo{" +
@@ -238,7 +247,7 @@ public class ContainerInfo {
                ", state=" + state +
                ", image='" + image + '\'' +
                ", networkSettings=" + networkSettings +
-               ", resolvConfPath='" + resolvConfPath + '\'' +
+               ", resolveConfPath='" + resolveConfPath + '\'' +
                ", hostConfig=" + hostConfig +
                ", driver='" + driver + '\'' +
                ", execDriver='" + execDriver + '\'' +
@@ -252,6 +261,7 @@ public class ContainerInfo {
                ", logPath='" + logPath + '\'' +
                ", volumes=" + volumes +
                ", volumesRW=" + volumesRW +
+               ", node=" + node +
                '}';
     }
 }
