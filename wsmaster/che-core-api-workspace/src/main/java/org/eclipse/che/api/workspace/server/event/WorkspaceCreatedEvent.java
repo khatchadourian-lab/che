@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.che.api.workspace.server.event;
 
-import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
+import org.eclipse.che.api.core.model.workspace.Workspace;
 import org.eclipse.che.api.core.notification.EventOrigin;
 
 /**
@@ -20,13 +20,13 @@ import org.eclipse.che.api.core.notification.EventOrigin;
  */
 @EventOrigin("workspace")
 public class WorkspaceCreatedEvent {
-    private final UsersWorkspace workspace;
+    private final Workspace workspace;
 
-    public WorkspaceCreatedEvent(UsersWorkspace workspace) {
+    public WorkspaceCreatedEvent(Workspace workspace) {
         this.workspace = workspace;
     }
 
-    public UsersWorkspace getWorkspace() {
+    public Workspace getWorkspace() {
         return workspace;
     }
 }
