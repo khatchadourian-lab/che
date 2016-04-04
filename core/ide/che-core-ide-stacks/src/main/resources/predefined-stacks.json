@@ -30,7 +30,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -105,7 +105,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -202,7 +202,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -285,7 +285,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -364,7 +364,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -442,7 +442,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -533,7 +533,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -574,7 +574,7 @@
       }
     ],
     "source": {
-      "type": "recipe",
+      "type": "dockerfile",
       "origin": "FROM codenvy/debian_jre\nCMD tail -f /dev/null"
     },
     "workspaceConfig": {
@@ -590,7 +590,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -643,7 +643,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -656,7 +656,7 @@
       "description": null
     },
     "source": {
-      "type": "recipe",
+      "type": "dockerfile",
       "origin": "FROM codenvy/ubuntu_jre\nCMD tail -f /dev/null"
     },
     "permissions": {
@@ -721,7 +721,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
@@ -803,7 +803,7 @@
               },
               "source": {
                 "location": "stub",
-                "type": "recipe"
+                "type": "dockerfile"
               },
               "type": "docker",
               "dev": true
