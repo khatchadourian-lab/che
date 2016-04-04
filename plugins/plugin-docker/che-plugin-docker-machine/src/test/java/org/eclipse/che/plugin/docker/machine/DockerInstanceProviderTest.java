@@ -42,8 +42,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,7 +138,7 @@ public class DockerInstanceProviderTest {
 
     @Test
     public void shouldReturnRecipeTypesDockerfile() throws Exception {
-        assertEquals(dockerInstanceProvider.getRecipeTypes(), Collections.singleton("Dockerfile"));
+        assertEquals(dockerInstanceProvider.getRecipeTypes(), Collections.singleton("dockerfile"));
     }
 
     // TODO add tests for instance snapshot removal

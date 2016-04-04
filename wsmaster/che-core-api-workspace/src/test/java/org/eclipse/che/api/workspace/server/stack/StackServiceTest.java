@@ -126,7 +126,7 @@ public class StackServiceTest {
     private static final boolean IS_DEV              = true;
 
     private static final String MACHINE_SOURCE_LOCATION = "http://localhost:8080/ide/api/recipe/recipe_ubuntu/script";
-    private static final String MACHINE_SOURCE_TYPE     = "recipe";
+    private static final String MACHINE_SOURCE_TYPE     = "dockerfile";
 
     private static final String ICON_MEDIA_TYPE = "image/svg+xml";
 

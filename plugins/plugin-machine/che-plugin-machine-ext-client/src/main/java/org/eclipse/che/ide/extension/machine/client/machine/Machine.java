@@ -75,7 +75,7 @@ public class Machine {
         MachineSourceDto machineSource = descriptor.getConfig().getSource();
 
         String machineSourceType = machineSource.getType();
-
+// todo
         if ("recipe".equalsIgnoreCase(machineSourceType)) {
             return machineSource.getLocation();
         }
