@@ -10,29 +10,41 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import org.eclipse.che.plugin.docker.client.ProgressMonitor;
+
 /**
- * Arguments holder for {@code push} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#push(PushParams, ProgressMonitor)}.
  *
  * @author Mykola Morhun
  */
 public class PushParams {
-    /** full repository name */
+
     private String repository;
-    /** tag of the image */
     private String tag;
-    /** registry url */
     private String registry;
 
+    /**
+     * @param repository
+     *         full repository name
+     */
     public PushParams withRepository(String repository) {
         this.repository = repository;
         return this;
     }
 
+    /**
+     * @param tag
+     *         tag of the image
+     */
     public PushParams withTag(String tag) {
         this.tag = tag;
         return this;
     }
 
+    /**
+     * @param registry
+     *         registry url
+     */
     public PushParams withRegistry(String registry) {
         this.registry = registry;
         return this;

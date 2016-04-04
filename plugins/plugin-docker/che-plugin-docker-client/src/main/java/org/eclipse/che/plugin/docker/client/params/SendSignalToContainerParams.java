@@ -11,22 +11,29 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code sendSignalToContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#sendSignalToContainer(SendSignalToContainerParams)}.
  *
  * @author Mykola Morhun
  */
 public class SendSignalToContainerParams {
-    /** container identifier, either id or name */
+
     private String container;
-    /** code of signal, e.g. 9 in case of SIGKILL */
     private Integer signal;
 
+    /**
+     * @param container
+     *         container identifier, either id or name
+     */
     public SendSignalToContainerParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
-    public SendSignalToContainerParams withSignal(Integer signal) {
+    /**
+     * @param signal
+     *         code of signal, e.g. 9 in case of SIGKILL
+     */
+    public SendSignalToContainerParams withSignal(int signal) {
         this.signal = signal;
         return this;
     }

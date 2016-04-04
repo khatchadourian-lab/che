@@ -11,42 +11,58 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code commit} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#commit(CommitParams)}.
  *
  * @author Mykola Morhun
  */
 public class CommitParams {
-    /** source container */
+
     private String container;
-    /** full repository name */
     private String repository;
-    /** tag of the image */
     private String tag;
-    /** commit message */
     private String comment;
-    /** author of the commit */
     private String author;
 
+    /**
+     * @param container
+     *         source container
+     */
     public CommitParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
+    /**
+     * @param repository
+     *         full repository name
+     */
     public CommitParams withRepository(String repository) {
         this.repository = repository;
         return this;
     }
 
+    /**
+     * @param tag
+     *         tag of the image
+     */
     public CommitParams withTag(String tag) {
         this.tag = tag;
         return this;
     }
 
+    /**
+     * @param comment
+     *         commit message
+     */
     public CommitParams withComment(String comment) {
         this.comment = comment;
         return this;
     }
 
+    /**
+     * @param author
+     *         author of the commit
+     */
     public CommitParams withAuthor(String author) {
         this.author = author;
         return this;

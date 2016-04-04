@@ -10,57 +10,75 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.dto.AuthConfigs;
 
 import java.io.File;
 
 /**
- * Arguments holder for {@code buildImage} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#buildImage(BuildImageParams, ProgressMonitor)}.
  *
  * @author Mykola Morhun
  */
 public class BuildImageParams {
-    /** full repository name to be applied to newly created image */
+
     private String repository;
-    /** authentication configuration for private registries. Can be null */
     private AuthConfigs authConfigs;
-    /** is pull with force */
     private Boolean doForcePull;
-    /** memory limit for build in bytes */
     private Long memoryLimit;
-    /** total memory in bytes (memory + swap), -1 to enable unlimited swap */
     private Long memorySwapLimit;
-    /**
-     * files that are needed for creation docker images (e.g. file of directories used in ADD instruction in Dockerfile).
-     * One of them must be Dockerfile.
-     */
     private File[] files;
 
+    /**
+     * @param repository
+     *         full repository name to be applied to newly created image
+     */
     public BuildImageParams withRepository(String repository) {
         this.repository = repository;
         return this;
     }
 
+    /**
+     * @param authConfigs
+     *         authentication configuration for private registries. Can be null
+     */
     public BuildImageParams withAuthConfigs(AuthConfigs authConfigs) {
         this.authConfigs = authConfigs;
         return this;
     }
 
-    public BuildImageParams withDoForcePull(Boolean doForcePull) {
+    /**
+     * @param doForcePull
+     *         is pull with force
+     */
+    public BuildImageParams withDoForcePull(boolean doForcePull) {
         this.doForcePull = doForcePull;
         return this;
     }
 
-    public BuildImageParams withMemoryLimit(Long memoryLimit) {
+    /**
+     * @param memoryLimit
+     *         memory limit for build in bytes
+     */
+    public BuildImageParams withMemoryLimit(long memoryLimit) {
         this.memoryLimit = memoryLimit;
         return this;
     }
 
-    public BuildImageParams withMemorySwapLimit(Long memorySwapLimit) {
+    /**
+     * @param memorySwapLimit
+     *         total memory in bytes (memory + swap), -1 to enable unlimited swap
+     */
+    public BuildImageParams withMemorySwapLimit(long memorySwapLimit) {
         this.memorySwapLimit = memorySwapLimit;
         return this;
     }
 
+    /**
+     * @param files
+     *         files that are needed for creation docker images (e.g. file of directories used in ADD instruction in Dockerfile).
+     *         One of them must be Dockerfile.
+     */
     public BuildImageParams withFiles(File... files) {
         this.files = files;
         return this;

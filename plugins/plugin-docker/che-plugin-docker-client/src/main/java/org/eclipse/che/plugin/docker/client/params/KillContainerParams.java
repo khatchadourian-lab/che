@@ -11,14 +11,18 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code killContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#killContainer(KillContainerParams)}.
  *
  * @author Mykola Morhun
  */
 public class KillContainerParams {
-    /** container identifier, either id or name */
+
     private String container;
 
+    /**
+     * @param container
+     *         container identifier, either id or name
+     */
     public KillContainerParams withContainer(String container) {
         this.container = container;
         return this;

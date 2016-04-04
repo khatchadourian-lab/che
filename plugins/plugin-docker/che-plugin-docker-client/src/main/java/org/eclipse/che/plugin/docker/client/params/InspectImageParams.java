@@ -11,14 +11,18 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code inspectImage} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#inspectImage(InspectImageParams)}.
  *
  * @author Mykola Morhun
  */
 public class InspectImageParams {
-    /** id or full repository name of docker image */
+
     private String image;
 
+    /**
+     * @param image
+     *         id or full repository name of docker image
+     */
     public InspectImageParams withImage(String image) {
         this.image = image;
         return this;

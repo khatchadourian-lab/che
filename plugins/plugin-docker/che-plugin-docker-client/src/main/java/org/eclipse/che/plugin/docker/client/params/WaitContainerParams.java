@@ -11,14 +11,18 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code waitContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#waitContainer(WaitContainerParams)}.
  *
  * @author Mykola Morhun
  */
 public class WaitContainerParams {
-    /** container identifier, either id or name */
+
     private String container;
 
+    /**
+     * @param container
+     *         container identifier, either id or name
+     */
     public WaitContainerParams withContainer(String container) {
         this.container = container;
         return this;

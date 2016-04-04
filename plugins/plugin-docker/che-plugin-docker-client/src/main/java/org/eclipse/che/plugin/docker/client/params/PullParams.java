@@ -10,29 +10,41 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import org.eclipse.che.plugin.docker.client.ProgressMonitor;
+
 /**
- * Arguments holder for {@code pull} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#pull(PullParams, ProgressMonitor)}.
  *
  * @author Mykola Morhun
  */
 public class PullParams {
-    /** full repository name to be applied to newly created image */
+
     private String image;
-    /** tag of the image */
     private String tag;
-    /** registry url */
     private String registry;
 
+    /**
+     * @param image
+     *         full repository name to be applied to newly created image
+     */
     public PullParams withImage(String image) {
         this.image = image;
         return this;
     }
 
+    /**
+     * @param tag
+     *         tag of the image
+     */
     public PullParams withTag(String tag) {
         this.tag = tag;
         return this;
     }
 
+    /**
+     * @param registry
+     *         registry url
+     */
     public PullParams withRegistry(String registry) {
         this.registry = registry;
         return this;

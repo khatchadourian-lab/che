@@ -11,7 +11,7 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code getSystemInfo} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#getSystemInfo(GetSystemInfoParams)}.
  *
  * @author Mykola Morhun
  */

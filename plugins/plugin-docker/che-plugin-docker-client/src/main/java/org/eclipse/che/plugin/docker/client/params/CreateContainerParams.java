@@ -13,7 +13,7 @@ package org.eclipse.che.plugin.docker.client.params;
 import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
 
 /**
- * Arguments holder for {@code createContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#createContainer(CreateContainerParams)}.
  *
  * @author Mykola Morhun
  */

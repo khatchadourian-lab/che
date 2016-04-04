@@ -11,26 +11,29 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code removeImage} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#removeImage(RemoveImageParams)}.
  *
  * @author Mykola Morhun
  */
 public class RemoveImageParams {
-    /** image name */
+
     private String  image;
-    /** force removal of the image */
     private Boolean force;
 
-    public RemoveImageParams() {
-        force = false;
-    }
-
+    /**
+     * @param image
+     *         image name
+     */
     public RemoveImageParams withImage(String image) {
         this.image = image;
         return this;
     }
 
-    public RemoveImageParams withForce(Boolean force) {
+    /**
+     * @param force
+     *         force removal of the image
+     */
+    public RemoveImageParams withForce(boolean force) {
         this.force = force;
         return this;
     }

@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import org.eclipse.che.plugin.docker.client.MessageProcessor;
+
 /**
- * Arguments holder for {@code startExec} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#startExec(StartExecParams, MessageProcessor)}.
  *
  * @author Mykola Morhun
  */
 public class StartExecParams {
     private String id;
 
+    /**
+     * @param execId
+     *         exec id
+     */
     public StartExecParams withExecId(String execId) {
         id = execId;
         return this;

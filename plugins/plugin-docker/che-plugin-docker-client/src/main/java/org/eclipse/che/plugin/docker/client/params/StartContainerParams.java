@@ -13,15 +13,19 @@ package org.eclipse.che.plugin.docker.client.params;
 import org.eclipse.che.plugin.docker.client.json.HostConfig;
 
 /**
- * Arguments holder for {@code startContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#startContainer(StartContainerParams)}.
  *
  * @author Mykola Morhun
  */
 public class StartContainerParams {
-    /** id of container to start */
+
     private String     container;
     private HostConfig hostConfig;
 
+    /**
+     * @param container
+     *         id of container to start
+     */
     public StartContainerParams withContainer(String container) {
         this.container = container;
         return this;

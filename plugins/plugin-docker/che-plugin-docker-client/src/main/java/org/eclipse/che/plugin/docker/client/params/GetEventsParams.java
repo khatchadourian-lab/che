@@ -10,34 +10,43 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import org.eclipse.che.plugin.docker.client.MessageProcessor;
 import org.eclipse.che.plugin.docker.client.json.Filters;
 
 /**
- * Arguments holder for {@code getEvents} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#getEvents(GetEventsParams, MessageProcessor)}.
  *
  * @author Mykola Morhun
  */
 public class GetEventsParams {
-    /** UNIX date in seconds. Allow omit events created before specified date */
+
     private Long sinceSecond;
-    /** UNIX date in seconds. Allow omit events created after specified date */
     private Long untilSecond;
-    /**
-     * filter of needed events. Available filters: {@code event=<string>}
-     * {@code image=<string>} {@code container=<string>}
-     */
     private Filters filters;
 
-    public GetEventsParams withSinceSecond(Long sinceSecond) {
+    /**
+     * @param sinceSecond
+     *         UNIX date in seconds. Allow omit events created before specified date
+     */
+    public GetEventsParams withSinceSecond(long sinceSecond) {
         this.sinceSecond = sinceSecond;
         return this;
     }
 
-    public GetEventsParams withUntilSecond(Long untilSecond) {
+    /**
+     * @param untilSecond
+     *         UNIX date in seconds. Allow omit events created after specified date
+     */
+    public GetEventsParams withUntilSecond(long untilSecond) {
         this.untilSecond = untilSecond;
         return this;
     }
 
+    /**
+     * @param filters
+     *         filter of needed events. Available filters: {@code event=<string>}
+     *         {@code image=<string>} {@code container=<string>}
+     */
     public GetEventsParams withFilters(Filters filters) {
         this.filters = filters;
         return this;

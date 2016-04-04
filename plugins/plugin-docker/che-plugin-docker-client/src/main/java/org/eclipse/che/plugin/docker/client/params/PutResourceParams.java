@@ -13,38 +13,49 @@ package org.eclipse.che.plugin.docker.client.params;
 import java.io.InputStream;
 
 /**
- * Arguments holder for {@code putResource} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#putResource(PutResourceParams)}.
  *
  * @author Mykola Morhun
  */
 public class PutResourceParams {
-    /** container id */
+
     private String container;
-    /** path to file or directory inside specified container */
     private String targetPath;
-    /** stream of files from source container */
     private InputStream sourceStream;
-    /**
-     * If "false" then it will be an error if unpacking the given content would cause an existing
-     * directory to be replaced with a non-directory or other resource and vice versa.
-     */
     private Boolean noOverwriteDirNonDir;
 
+    /**
+     * @param container
+     *         container id
+     */
     public PutResourceParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
+    /**
+     * @param targetPath
+     *         path to file or directory inside specified container
+     */
     public PutResourceParams withTargetPath(String targetPath) {
         this.targetPath = targetPath;
         return this;
     }
 
+    /**
+     * @param sourceStream
+     *         stream of files from source container
+     */
     public PutResourceParams withSourceStream(InputStream sourceStream) {
         this.sourceStream = sourceStream;
         return this;
     }
 
+    /**
+     * @param noOverwriteDirNonDir
+     *         If "false" then it will be an error if unpacking the given content would cause an existing
+     *          directory to be replaced with a non-directory or other resource and vice versa.
+     */
     public PutResourceParams withNoOverwriteDirNonDir(Boolean noOverwriteDirNonDir) {
         this.noOverwriteDirNonDir = noOverwriteDirNonDir;
         return this;

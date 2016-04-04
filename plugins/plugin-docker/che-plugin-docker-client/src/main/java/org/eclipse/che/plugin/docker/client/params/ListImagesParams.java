@@ -11,7 +11,7 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code listImages} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#listImages(ListImagesParams)}.
  *
  * @author Mykola Morhun
  */

@@ -11,21 +11,28 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code top} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#top(TopParams)}.
  *
  * @author Mykola Morhun
  */
 public class TopParams {
-    /** container id */
+
     private String   container;
-    /** ps arguments to use */
     private String[] psArgs;
 
+    /**
+     * @param container
+     *         container id
+     */
     public TopParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
+    /**
+     * @param psArgs
+     *         ps arguments to use
+     */
     public TopParams withPsArgs(String[] psArgs) {
         this.psArgs = psArgs;
         return this;

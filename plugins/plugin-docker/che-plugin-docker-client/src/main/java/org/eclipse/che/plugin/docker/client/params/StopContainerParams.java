@@ -13,29 +13,41 @@ package org.eclipse.che.plugin.docker.client.params;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Arguments holder for {@code stopContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#stopContainer(StopContainerParams)}.
  *
  * @author Mykola Morhun
  */
 public class StopContainerParams {
-    /** container identifier, either id or name */
+
     private String   container;
-    /** time to wait for the container to stop before killing it */
     private Long     timeout;
-    /** time unit of the timeout parameter */
     private TimeUnit timeunit;
 
+    /**
+     * @param container
+     *         container identifier, either id or name
+     */
     public StopContainerParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
-    public StopContainerParams withTimeout(Long timeout) {
+    /**
+     * @param timeout
+     *         time to wait for the container to stop before killing it
+     */
+    public StopContainerParams withTimeout(long timeout) {
         withTimeout(timeout, TimeUnit.SECONDS);
         return this;
     }
 
-    public StopContainerParams withTimeout(Long timeout, TimeUnit timeunit) {
+    /**
+     * @param timeout
+     *         time to wait for the container to stop before killing it
+     * @param timeunit
+     *         time unit of the timeout parameter
+     */
+    public StopContainerParams withTimeout(long timeout, TimeUnit timeunit) {
         this.timeout = timeout;
         this.timeunit = timeunit;
         return this;

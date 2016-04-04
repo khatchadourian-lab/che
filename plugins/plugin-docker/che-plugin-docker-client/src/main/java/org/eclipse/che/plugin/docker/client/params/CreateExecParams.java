@@ -11,28 +11,38 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code createExec} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#createExec(CreateExecParams)}.
  *
  * @author Mykola Morhun
  */
 public class CreateExecParams {
-    /** id of container */
+
     private String   container;
-    /** is stdout & stderr detached */
     private Boolean  detach;
-    /** command to run specified as a string or an array of strings */
     private String[] cmd;
 
+    /**
+     * @param container
+     *         id of container
+     */
     public CreateExecParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
-    public CreateExecParams withDetach(Boolean detach) {
+    /**
+     * @param detach
+     *         is stdout & stderr detached
+     */
+    public CreateExecParams withDetach(boolean detach) {
         this.detach = detach;
         return this;
     }
 
+    /**
+     * @param cmd
+     *         command to run specified as a string or an array of strings
+     */
     public CreateExecParams withCmd(String[] cmd) {
         this.cmd = cmd;
         return this;

@@ -11,14 +11,18 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code getExecInfo} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#getExecInfo(GetExecInfoParams)}.
  *
  * @author Mykola Morhun
  */
 public class GetExecInfoParams {
-    /** exec id */
+
     private String id;
 
+    /**
+     * @param execId
+     *         exec id
+     */
     public GetExecInfoParams withExecId(String execId) {
         id = execId;
         return this;

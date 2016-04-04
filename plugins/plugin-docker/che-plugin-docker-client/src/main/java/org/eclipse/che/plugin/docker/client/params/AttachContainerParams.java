@@ -10,26 +10,33 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import org.eclipse.che.plugin.docker.client.MessageProcessor;
+
 /**
- * Arguments holder for {@code attachContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#attachContainer(AttachContainerParams, MessageProcessor)} .
  *
  * @author Mykola Morhun
  */
 public class AttachContainerParams {
-    /** id of container */
+
     private String container;
-    /**
-     * if {@code true} gets 'live' stream from container.
-     * Note, that 'live' stream blocks until container is running.
-     */
     private Boolean stream;
 
+    /**
+     * @param container
+     *         id of container
+     */
     public AttachContainerParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
-    public AttachContainerParams withStream(Boolean stream) {
+    /**
+     * @param stream
+     *         if {@code true} gets 'live' stream from container.
+     *         Note, that 'live' stream blocks until container is running.
+     */
+    public AttachContainerParams withStream(boolean stream) {
         this.stream = stream;
         return this;
     }

@@ -11,14 +11,18 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code inspectContainer} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for{@link org.eclipse.che.plugin.docker.client.DockerConnector#inspectContainer(InspectContainerParams)}.
  *
  * @author Mykola Morhun
  */
 public class InspectContainerParams {
-    /** id of container */
+
     private String container;
 
+    /**
+     * @param container
+     *         id of container
+     */
     public InspectContainerParams withContainer(String container) {
         this.container = container;
         return this;

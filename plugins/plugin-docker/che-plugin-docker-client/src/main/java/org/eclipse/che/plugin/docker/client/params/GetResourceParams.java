@@ -11,21 +11,28 @@
 package org.eclipse.che.plugin.docker.client.params;
 
 /**
- * Arguments holder for {@code getResource} method of {@link org.eclipse.che.plugin.docker.client.DockerConnector}.
+ * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#getResource(GetResourceParams)}.
  *
  * @author Mykola Morhun
  */
 public class GetResourceParams {
-    /** container id */
+
     private String container;
-    /** path to file or directory inside specified container */
     private String sourcePath;
 
+    /**
+     * @param container
+     *         container id
+     */
     public GetResourceParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
+    /**
+     * @param sourcePath
+     *         path to file or directory inside specified container
+     */
     public GetResourceParams withSourcePath(String sourcePath) {
         this.sourcePath = sourcePath;
         return this;
