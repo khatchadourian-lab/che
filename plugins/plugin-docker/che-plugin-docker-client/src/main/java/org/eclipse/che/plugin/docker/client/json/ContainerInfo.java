@@ -26,7 +26,7 @@ public class ContainerInfo {
     private ContainerState  state;
     private String          image;
     private NetworkSettings networkSettings;
-    private String          resolveConfPath;
+    private String          resolvConfPath;
     private HostConfig      hostConfig;
     private String          driver;
     private String          execDriver;
@@ -107,12 +107,12 @@ public class ContainerInfo {
         this.networkSettings = networkSettings;
     }
 
-    public String getResolveConfPath() {
-        return resolveConfPath;
+    public String getResolvConfPath() {
+        return resolvConfPath;
     }
 
-    public void setResolveConfPath(String resolveConfPath) {
-        this.resolveConfPath = resolveConfPath;
+    public void setResolvConfPath(String resolvConfPath) {
+        this.resolvConfPath = resolvConfPath;
     }
 
     public Map<String, String> getVolumes() {
@@ -247,7 +247,7 @@ public class ContainerInfo {
                ", state=" + state +
                ", image='" + image + '\'' +
                ", networkSettings=" + networkSettings +
-               ", resolveConfPath='" + resolveConfPath + '\'' +
+               ", resolvConfPath='" + resolvConfPath + '\'' +
                ", hostConfig=" + hostConfig +
                ", driver='" + driver + '\'' +
                ", execDriver='" + execDriver + '\'' +

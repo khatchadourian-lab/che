@@ -109,7 +109,7 @@ public class DockerInstanceRuntimeInfo implements MachineRuntimeInfo {
         md.put("name", info.getName());
         md.put("processLabel", info.getProcessLabel());
         md.put("volumesRW", String.valueOf(info.getVolumesRW()));
-        md.put("resolvConfPath", info.getResolveConfPath());
+        md.put("resolvConfPath", info.getResolvConfPath());
         md.put("args", Arrays.toString(info.getArgs()));
         md.put("volumes", String.valueOf(info.getVolumes()));
         md.put("restartCount", String.valueOf(info.getRestartCount()));
