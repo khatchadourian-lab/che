@@ -38,12 +38,12 @@ public abstract class CheMethodInvokerFilter implements MethodInvokerFilter {
             filter(genericMethodResource, arguments);
         } catch (ApiException exception) {
             Response response;
-            if (exception instanceof ForbiddenException) {
+            if (exception instanceof ForbiddenException)
                 response = Response.status(Response.Status.FORBIDDEN)
                                    .entity(DtoFactory.getInstance().toJson(exception.getServiceError()))
                                    .type(MediaType.APPLICATION_JSON)
                                    .build();
-            } else if (exception instanceof NotFoundException)
+            else if (exception instanceof NotFoundException)
                 response = Response.status(Response.Status.NOT_FOUND)
                                    .entity(DtoFactory.getInstance().toJson(exception.getServiceError()))
                                    .type(MediaType.APPLICATION_JSON)
@@ -78,5 +78,15 @@ public abstract class CheMethodInvokerFilter implements MethodInvokerFilter {
         }
     }
 
+    /**
+     * Check does supplied method can be invoked.
+     *
+     * @param genericMethodResource
+     *         See {@link GenericMethodResource}
+     * @param arguments
+     *         actual method arguments that were created from request
+     * @throws ApiException
+     *         if method can not be invoked cause current environment context, e.g. for current user, with current request attributes, etc.
+     */
     protected abstract void filter(GenericMethodResource genericMethodResource, Object[] arguments) throws ApiException;
 }
