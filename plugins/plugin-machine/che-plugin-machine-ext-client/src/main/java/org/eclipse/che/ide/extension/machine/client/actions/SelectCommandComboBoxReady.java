@@ -20,6 +20,7 @@ import org.eclipse.che.api.machine.gwt.client.MachineServiceClient;
 import org.eclipse.che.api.machine.gwt.client.events.WsAgentStateEvent;
 import org.eclipse.che.api.machine.gwt.client.events.WsAgentStateHandler;
 import org.eclipse.che.api.machine.shared.dto.CommandDto;
+import org.eclipse.che.api.machine.shared.dto.MachineConfigDto;
 import org.eclipse.che.api.machine.shared.dto.MachineDto;
 import org.eclipse.che.api.promises.client.Function;
 import org.eclipse.che.api.promises.client.FunctionException;
@@ -43,9 +44,8 @@ import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.edit.EditCommandsPresenter;
 import org.eclipse.che.ide.extension.machine.client.machine.events.MachineStateEvent;
 import org.eclipse.che.ide.extension.machine.client.machine.events.MachineStateHandler;
-import org.eclipse.che.ide.ui.dropdown.DropDownHeaderWidget;
 import org.eclipse.che.ide.ui.dropdown.DropDownListFactory;
-import org.eclipse.che.ide.ui.dropdown.SimpleListElementAction;
+import org.eclipse.che.ide.ui.dropdown.DropDownWidget;
 import org.eclipse.che.ide.util.loging.Log;
 import org.vectomatic.dom.svg.ui.SVGImage;
 
@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.eclipse.che.ide.extension.machine.client.MachineExtension.GROUP_COMMANDS_LIST;
+import static org.eclipse.che.ide.extension.machine.client.MachineExtension.GROUP_MACHINES_LIST;
 import static org.eclipse.che.ide.workspace.perspectives.project.ProjectPerspective.PROJECT_PERSPECTIVE_ID;
 
 /**
@@ -78,19 +79,16 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
 
     private static final Comparator<CommandConfiguration> commandsComparator = new CommandsComparator();
 
-    private final MachineLocalizationConstant locale;
-    private final DropDownHeaderWidget        commandsListWidget;
-    private final DropDownHeaderWidget        machinesListWidget;
-    private final DropDownListFactory         dropDownListFactory;
-    private final String                      workspaceId;
-    private final ActionManager               actionManager;
-    private final WorkspaceServiceClient      workspaceServiceClient;
-    private final MachineServiceClient        machineServiceClient;
-    private final CommandTypeRegistry         commandTypeRegistry;
-    private final MachineResources            resources;
-    private final Map<String, Action>         registeredMachineActions;
+    private final DropDownWidget          commandsListWidget;
+    private final DropDownWidget          machinesListWidget;
+    private final String                  workspaceId;
+    private final ActionManager           actionManager;
+    private final WorkspaceServiceClient  workspaceServiceClient;
+    private final MachineServiceClient    machineServiceClient;
+    private final CommandTypeRegistry     commandTypeRegistry;
+    private final MachineResources        resources;
+    private final Map<String, MachineDto> registeredMachineMap;
 
-    private List<MachineDto>           machines;
     private List<CommandConfiguration> commands;
     private DefaultActionGroup         commandActions;
     private DefaultActionGroup         machinesActions;
@@ -110,17 +108,14 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
               locale.selectCommandControlTitle(),
               locale.selectCommandControlDescription(),
               null, null);
-        this.locale = locale;
         this.resources = resources;
         this.actionManager = actionManager;
         this.workspaceServiceClient = workspaceServiceClient;
         this.machineServiceClient = machineServiceClient;
         this.commandTypeRegistry = commandTypeRegistry;
-        this.dropDownListFactory = dropDownListFactory;
         this.workspaceId = appContext.getWorkspaceId();
 
-        this.registeredMachineActions = new HashMap<>();
-        this.machines = new ArrayList<>();
+        this.registeredMachineMap = new HashMap<>();
         this.commands = new LinkedList<>();
 
         this.machinesListWidget = dropDownListFactory.createList(GROUP_MACHINES);
@@ -173,7 +168,7 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
             return null;
         }
 
-        final String selectedCommandName = commandsListWidget.getSelectedElementName();
+        final String selectedCommandName = commandsListWidget.getSelectedName();
 
         for (CommandConfiguration configuration : commands) {
             if (configuration.getName().equals(selectedCommandName)) {
@@ -199,7 +194,7 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
     }
 
     public void setSelectedCommand(CommandConfiguration command) {
-        commandsListWidget.selectElement(command.getName());
+        commandsListWidget.selectElement(command.getName(), command.getName());
     }
 
     /**
@@ -259,7 +254,7 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
             if (prevCommand == null || !configuration.getType().getId().equals(prevCommand.getType().getId())) {
                 commandActions.addSeparator(configuration.getType().getDisplayName());
             }
-            commandActions.add(dropDownListFactory.createElement(configuration.getName(), configuration.getName(), commandsListWidget));
+            commandActions.add(commandsListWidget.createAction(configuration.getName(), configuration.getName()));
             prevCommand = configuration;
         }
 
@@ -287,29 +282,22 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
             // TODO: consider to saving last used command ID somewhere
             // for now, we always select first command
             final CommandConfiguration command = commands.get(0);
-            commandsListWidget.selectElement(command.getName());
+            commandsListWidget.selectElement(command.getName(), command.getName());
         }
     }
 
     @Nullable
     public MachineDto getSelectedMachine() {
-        String selectedMachineName = machinesListWidget.getSelectedElementName();
-        if (selectedMachineName == null) {
+        if (machinesListWidget.getSelectedId() == null) {
             return null;
         }
 
-        for (MachineDto machine : machines) {
-            if (selectedMachineName.equals(machine.getConfig().getName())) {
-                return machine;
-            }
-        }
-
-        return null;
+        return registeredMachineMap.get(machinesListWidget.getSelectedId());
     }
 
     /** Clears the selected element in the 'Select Command' menu. */
     private void setEmptyCommand() {
-        commandsListWidget.selectElement(this.locale.selectCommandEmptyCurrentCommandText());
+        commandsListWidget.selectElement(null, null);
     }
 
     @Override
@@ -337,23 +325,9 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
         machineServiceClient.getMachines(workspaceId).then(new Operation<List<MachineDto>>() {
             @Override
             public void apply(List<MachineDto> machines) throws OperationException {
-                for (MachineDto machine : machines) {
-                    addMachineActionToListBox(machine);
-                }
+                addMachineActions(machines);
             }
         });
-    }
-
-    private void addMachineActionToListBox(MachineDto machine) {
-        String machineName = machine.getConfig().getName();
-        SimpleListElementAction action = dropDownListFactory.createElement(machineName, machineName, machinesListWidget);
-
-        machinesListWidget.selectElement(machine.getConfig().getName());
-
-        registeredMachineActions.put(machine.getId(), action);
-
-        machinesActions.add(action);
-        machines.add(machine);
     }
 
 
@@ -365,26 +339,109 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
     public void onMachineRunning(MachineStateEvent event) {
         MachineDto machine = event.getMachine();
 
-        addMachineActionToListBox(machine);
+        addMachineAction(machine);
     }
 
     @Override
     public void onMachineDestroyed(MachineStateEvent event) {
         MachineDto machine = event.getMachine();
 
-        Action deletedAction = registeredMachineActions.get(machine.getId());
+        this.removeMachineAction(machine);
+    }
+
+    private void addMachineActions(List<MachineDto> machines) {
+        for (MachineDto machine : machines) {
+            registeredMachineMap.put(machine.getId(), machine);
+        }
+        this.updateMachineActions();
+    }
+
+    private void addMachineAction(MachineDto machine) {
+        registeredMachineMap.put(machine.getId(), machine);
+        this.updateMachineActions();
+
+        machinesListWidget.selectElement(machine.getId(), machine.getConfig().getName());
+    }
+
+    private boolean removeMachineAction(MachineDto machine) {
+        final String machineId = machine.getId();
+
+        MachineDto deletedAction = registeredMachineMap.get(machineId);
         if (deletedAction == null) {
+            return false;
+        }
+
+        registeredMachineMap.remove(machineId);
+        this.updateMachineActions();
+
+        if (machine.getConfig().getName().equals(machinesListWidget.getSelectedName())) {
+            machinesListWidget.selectElement(null, null);
+        }
+
+        return true;
+    }
+
+    private void updateMachineActions() {
+        machinesActions.removeAll();
+        final DefaultActionGroup actionList = (DefaultActionGroup)actionManager.getAction(GROUP_MACHINES_LIST);
+        if (actionList != null) {
+            machinesActions.addAll(actionList);
+        }
+        if (registeredMachineMap.isEmpty()) {
             return;
         }
 
-        machinesActions.remove(deletedAction);
-        machines.remove(machine);
+        final List<Map.Entry<String, MachineDto>> machineEntryList = new LinkedList(registeredMachineMap.entrySet());
+        // defined MachineDto Comparator here
+        Collections.sort(machineEntryList, new MachineDtoListEntryComparator());
 
-        if (machines.isEmpty()) {
-            return;
+        String machineCategory = null;
+        for (Map.Entry<String, MachineDto> machineEntry : machineEntryList) {
+            final MachineDto machine = machineEntry.getValue();
+            final MachineConfigDto machineConfig = machine.getConfig();
+            if (machineConfig.isDev() || machineCategory == null || !machineConfig.getType().equals(machineCategory)) {
+                machineCategory = machineConfig.isDev() ? "Development" : machine.getConfig().getType();
+                machinesActions.addSeparator(machineCategory);
+            }
+            machinesActions.add(machinesListWidget.createAction(machine.getId(), machineConfig.getName()));
         }
 
-        machinesListWidget.selectElement(machines.get(0).getConfig().getName());
+        machinesListWidget.updatePopup();
+
+        if (machinesListWidget.getSelectedName() == null && machinesActions.getChildrenCount() > 0) {
+            MachineDto firstMachine = machineEntryList.get(0).getValue();
+            if (firstMachine == null) {
+                return;
+            }
+            machinesListWidget.selectElement(firstMachine.getId(), firstMachine.getConfig().getName());
+        }
+    }
+
+    private static class MachineDtoListEntryComparator implements Comparator<Map.Entry<String, MachineDto>> {
+        @Override
+        public int compare(Map.Entry<String, MachineDto> o1, Map.Entry<String, MachineDto> o2) {
+            final MachineDto firstMachine = o1.getValue();
+            final MachineDto secondMachine = o2.getValue();
+
+            if (firstMachine == null) {
+                return -1;
+            }
+            if (secondMachine == null) {
+                return 1;
+            }
+
+            final MachineConfigDto firstMachineConfig = firstMachine.getConfig();
+            final MachineConfigDto secondMachineConfig = secondMachine.getConfig();
+
+            if (secondMachineConfig.isDev()) {
+                return 1;
+            }
+            if (firstMachineConfig.getType().equalsIgnoreCase(secondMachineConfig.getType())) {
+                return (firstMachineConfig.getName()).compareToIgnoreCase(secondMachineConfig.getName());
+            }
+
+            return (firstMachineConfig.getType()).compareToIgnoreCase(secondMachineConfig.getType());
+        }
     }
 
     private static class CommandsComparator implements Comparator<CommandConfiguration> {
