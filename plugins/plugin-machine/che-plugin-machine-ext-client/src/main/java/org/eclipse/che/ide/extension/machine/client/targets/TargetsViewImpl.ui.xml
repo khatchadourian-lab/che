@@ -18,52 +18,8 @@
 
     <ui:style src="org/eclipse/che/ide/api/ui/style.css">
 
-        .commandPanel > div:first-child + div {
+        .panel > div:first-child + div {
             border-right: 1px solid popupBorderColor;
-        }
-
-        .commandDefinitionHeader input,
-        .commandDefinitionBody input,
-        .commandDefinitionBody textarea {
-            font-size: 12px;
-            box-shadow: none;
-            border-radius: 0;
-            padding-left: 5px;
-            padding-right: 5px;
-            border-color: textFieldBorderColor !important;
-            width: literal("calc(100% - 12px)") !important;
-        }
-
-        .commandDefinitionHeader input,
-        .commandDefinitionBody input {
-            margin-bottom: 15px;
-            height: 20px;
-        }
-
-        .commandDefinitionHeader {
-            min-height: 60px;
-            width: 100%;
-        }
-
-        .commandDefinitionBody > div {
-            margin: 0;
-        }
-
-        .commandDefinitionBody > div div {
-            display: inline-block;
-            line-height: inherit;
-            width: 100%;
-        }
-
-        .title {
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .title,
-        .label {
-            margin-top: 0;
-            margin-left: 0;
         }
 
         .leftPart {
@@ -75,7 +31,51 @@
         }
 
         .rightPart {
-            margin: 10px;
+            margin-top: 10px;
+            margin-left: 16px;
+            margin-right: 16px;
+        }
+
+        /* Title */
+        .title {
+            font-size: 14px;
+            margin-bottom: 15px;
+            margin-top: 0;
+            margin-left: 0;
+        }
+
+        /* Hint */
+        .hint {
+            color: textFieldColor;
+            font-size: largeLabel;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        /* Labels */
+        .label {
+            margin-top: 0;
+            margin-left: 0;
+        }
+
+        .delimiter {
+            margin-top: 10px;
+        }
+
+        .propertiesPanel {
+            width: 100%;
+        }
+
+        .propertiesPanel input {
+            font-size: 12px;
+            box-shadow: none;
+            border-radius: 0;
+            padding-left: 5px;
+            padding-right: 5px;
+            border-color: textFieldBorderColor !important;
+            width: literal("calc(100% - 12px)") !important;
+            margin-bottom: 10px;
+            height: 20px;
         }
 
         .categories {
@@ -111,20 +111,25 @@
             user-select: text;
         }
 
-        .overFooter {
-            float: right;
+        .footer {
             position: absolute;
-            bottom: 0;
-            right: 0;
+            bottom: 11px;
+            width: 100%;
+            height: 22px;
         }
 
-        .overFooter button {
-            margin-right: 6px;
+        .footer button {
+            margin-right: 10px;
         }
+
+        .footer button:first-child {
+            margin-right: 0px;
+        }
+
 
     </ui:style>
 
-    <g:DockLayoutPanel unit="PX" width="780px" height="440px" addStyleNames="{style.commandPanel}">
+    <g:DockLayoutPanel unit="PX" width="780px" height="440px" addStyleNames="{style.panel}">
         <g:west size="380">
             <g:DockLayoutPanel unit="PX" addStyleNames="{style.leftPart}">
                 <g:north size="30">
@@ -137,23 +142,44 @@
                 </g:center>
             </g:DockLayoutPanel>
         </g:west>
-        <!--<g:center>-->
-            <!--<g:FlowPanel addStyleNames="{style.rightPart}">-->
-                <!--<g:FlowPanel>-->
-                    <!--<g:Label width="200px" text="Command Definition" addStyleNames="{style.title}"/>-->
-                <!--</g:FlowPanel>-->
-                <!--<g:FlowPanel ui:field="savePanel" addStyleNames="{style.commandDefinitionHeader}">-->
-                    <!--<g:Label width="50px" text="{machineLocale.editCommandsViewNameText}" addStyleNames="{style.label}"/>-->
-                    <!--<g:TextBox width="100%" height="14px" ui:field="configurationName" tabIndex="0"/>-->
-                <!--</g:FlowPanel>-->
-                <!--<g:SimplePanel ui:field="contentPanel" addStyleNames="{style.commandDefinitionBody}"/>-->
-                <!--<g:FlowPanel ui:field="previewUrlPanel" addStyleNames="{style.commandDefinitionHeader}">-->
-                    <!--<g:Label width="auto" text="Preview URL" addStyleNames="{style.label}"/>-->
-                    <!--<g:TextBox width="100%" height="14px" ui:field="configurationPreviewUrl" tabIndex="0"/>-->
-                <!--</g:FlowPanel>-->
-                <!--<g:FlowPanel ui:field="overFooter" addStyleNames="{style.overFooter}"/>-->
-            <!--</g:FlowPanel>-->
-        <!--</g:center>-->
+        <g:center>
+            <g:FlowPanel addStyleNames="{style.rightPart}">
+
+                <g:FlowPanel>
+                    <g:Label width="200px" text="{machineLocale.targetsViewTargetDefinition}" addStyleNames="{style.title}"/>
+                </g:FlowPanel>
+
+                <g:FlowPanel ui:field="hintPanel" visible="false">
+                    <g:Label text="{machineLocale.targetsViewNewTargetHint}" addStyleNames="{style.hint}"/>
+                </g:FlowPanel>
+
+                <g:FlowPanel ui:field="infoPanel" visible="false">
+                    <g:Label text="Unable to edit target" addStyleNames="{style.hint}"/>
+                </g:FlowPanel>
+
+                <g:FlowPanel ui:field="propertiesPanel" styleName="{style.propertiesPanel}" visible="false">
+
+                    <g:Label width="100%" text="Name" addStyleNames="{style.label} {style.delimiter}"/>
+                    <g:TextBox width="100%" height="14px" ui:field="targetName" tabIndex="0"/>
+
+                    <g:Label width="100%" text="IP Address" addStyleNames="{style.label} {style.delimiter}"/>
+                    <g:TextBox width="100%" height="14px" ui:field="host" tabIndex="0"/>
+
+                    <g:Label width="100%" text="Port" addStyleNames="{style.label}"/>
+                    <g:TextBox width="100%" height="14px" ui:field="port" tabIndex="0"/>
+
+                    <g:Label width="100%" text="Login" addStyleNames="{style.label} {style.delimiter}"/>
+                    <g:TextBox width="100%" height="14px" ui:field="userName" tabIndex="0"/>
+
+                    <g:Label width="100%" text="Password" addStyleNames="{style.label}"/>
+                    <g:TextBox width="100%" height="14px" ui:field="password" tabIndex="0"/>
+
+                    <g:FlowPanel ui:field="footer" addStyleNames="{style.footer}"/>
+
+                </g:FlowPanel>
+
+            </g:FlowPanel>
+        </g:center>
     </g:DockLayoutPanel>
 
 </ui:UiBinder>

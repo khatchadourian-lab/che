@@ -121,7 +121,9 @@ public class MachineExtension {
                                 CreateSnapshotAction createSnapshotAction,
                                 RunCommandAction runCommandAction,
                                 NewTerminalAction newTerminalAction,
-                                EditTargetsAction editTargetsAction) {
+                                EditTargetsAction editTargetsAction,
+                                IconRegistry iconRegistry,
+                                MachineResources machineResources) {
         final DefaultActionGroup mainMenu = (DefaultActionGroup)actionManager.getAction(GROUP_MAIN_MENU);
 
         final DefaultActionGroup workspaceMenu = (DefaultActionGroup)actionManager.getAction(GROUP_WORKSPACE);
@@ -188,6 +190,10 @@ public class MachineExtension {
 
         // Define hot-keys
         keyBinding.getGlobal().addKey(new KeyBuilder().alt().charCode(KeyCodeMap.F12).build(), "newTerminal");
+
+        iconRegistry.registerIcon(new Icon("che.runtime.icon", machineResources.devMachine()));
+        iconRegistry.registerIcon(new Icon("docker.runtime.icon", machineResources.devMachine()));
+        iconRegistry.registerIcon(new Icon("ssh.runtime.icon", machineResources.ssh()));
     }
 
     @Inject
@@ -201,4 +207,5 @@ public class MachineExtension {
         consoleToolbarActionGroup.addSeparator();
         machineConsoleToolbar.bindMainGroup(consoleToolbarActionGroup);
     }
+
 }

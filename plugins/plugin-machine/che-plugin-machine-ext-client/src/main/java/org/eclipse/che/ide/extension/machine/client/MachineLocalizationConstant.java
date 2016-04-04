@@ -203,6 +203,12 @@ public interface MachineLocalizationConstant extends Messages {
     @Key("view.targets.title")
     String targetsViewTitle();
 
+    @Key("view.targets.targetDefinition")
+    String targetsViewTargetDefinition();
+
+    @Key("view.targets.newTarget.hint")
+    String targetsViewNewTargetHint();
+
 
     @Key("process.active")
     String processActive();
