@@ -31,9 +31,8 @@ export class CheProjectType {
 
     // project types per workspace ID
     this.typesWorkspaces = new Map();
-    let protocol = $location.protocol() + '://';
     // remote call
-    this.remoteProjectTypeAPI = this.$resource(protocol + '/:agent/api/ext/project-type/:workspaceId');
+    this.remoteProjectTypeAPI = this.$resource('//:agent/api/ext/project-type/:workspaceId');
 
   }
 

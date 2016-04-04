@@ -38,9 +38,6 @@ export class CheWorkspace {
     // per Id
     this.workspacesById = new Map();
 
-    // per workspace
-    this.runtimeConfig = new Map();
-
     // listeners if workspaces are changed/updated
     this.listeners = [];
 
@@ -59,7 +56,7 @@ export class CheWorkspace {
   }
 
   getWorkspaceAgent(workspaceId) {
-    let runtimeConfig = this.getRuntimeConfig(workspaceId);
+    let runtimeConfig = this.getWorkspaceById(workspaceId).runtime;
     let wsAgentLink;
     if (runtimeConfig) {
       wsAgentLink = this.lodash.find(runtimeConfig.links, (link) => {

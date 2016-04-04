@@ -31,11 +31,10 @@ export class CheGit {
     this.remoteGitUrlArraysMap = new Map();
     this.localGitUrlsMap = new Map();
 
-    let protocol = $location.protocol() + '://';
     // remote call
-    this.remoteGitAPI = this.$resource(protocol + '/:agent/api/ext/git', {agent : 'agent'}, {
-      getLocalUrl: {method: 'GET', url: protocol + '/:agent/api/ext/git/:workspaceId/read-only-url?projectPath=:path', isArray: false},
-      getRemoteUrlArray: {method: 'POST', url: protocol + '/:agent/api/ext/git/:workspaceId/remote-list?projectPath=:path', isArray: true}
+    this.remoteGitAPI = this.$resource('//:agent/api/ext/git', {agent : 'agent'}, {
+      getLocalUrl: {method: 'GET', url: '//:agent/api/ext/git/:workspaceId/read-only-url?projectPath=:path', isArray: false},
+      getRemoteUrlArray: {method: 'POST', url: '//:agent/api/ext/git/:workspaceId/remote-list?projectPath=:path', isArray: true}
     });
   }
 

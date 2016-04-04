@@ -37,17 +37,19 @@ export class ProjectDetailsCtrl {
     this.workspacesById = cheAPI.getWorkspace().getWorkspacesById();
     cheAPI.getWorkspace().fetchWorkspaces();
 
-    if (!cheAPI.getWorkspace().getRuntimeConfig(this.workspaceId)) {
-      cheAPI.getWorkspace().fetchRuntimeConfig(this.workspaceId).then(() => {
-        this.fetchProjectDetails()
-      }, (error) => {
-        if (error.status === 404) {
+    this.workspace = cheAPI.getWorkspace().getWorkspaceById(this.workspaceId);
+
+    if (!this.workspace || !this.workspace.runtime) {
+      cheAPI.getWorkspace().fetchWorkspaceDetails(this.workspaceId).then(() => {
+        if (this.workspace && this.workspace.runtime) {
+         this.fetchProjectDetails();
+        } else {
           this.loading = false;
           this.noWorkspaceRuntime = true;
-        } else {
-          this.cheNotification.showError(error.data.message ? error.data.message : 'Failed to get runtime of the project workspace.');
-          this.$log.log('error', error);
         }
+      }, (error) => {
+        this.cheNotification.showError(error.data.message ? error.data.message : 'Failed to get runtime of the project workspace.');
+        this.$log.log('error', error);
       });
     } else {
       this.fetchProjectDetails();
