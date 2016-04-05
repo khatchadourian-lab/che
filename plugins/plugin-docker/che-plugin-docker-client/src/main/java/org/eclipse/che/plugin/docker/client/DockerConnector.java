@@ -1413,7 +1413,7 @@ public class DockerConnector {
                             final URI dockerDaemonUri) throws IOException, InterruptedException {
         final String repository = requiredNonNull(params.getRepository(), "Push: repository is null");
         final String tag = params.getTag();
-        final String registry = requiredNonNull(params.getRegistry(), "Push: registry is null");
+        final String registry = params.getRegistry();
 
         final List<Pair<String, ?>> headers = new ArrayList<>(3);
         headers.add(Pair.of("Content-Type", MediaType.TEXT_PLAIN));
