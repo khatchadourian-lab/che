@@ -29,7 +29,6 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.workspace.gwt.client.WorkspaceServiceClient;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.action.AbstractPerspectiveAction;
-import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.CustomComponentAction;
@@ -119,7 +118,7 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
         this.commands = new LinkedList<>();
 
         this.machinesListWidget = dropDownListFactory.createList(GROUP_MACHINES);
-        this.commandsListWidget = dropDownListFactory.createList(GROUP_COMMANDS_LIST);
+        this.commandsListWidget = dropDownListFactory.createList(GROUP_COMMANDS);
 
         editCommandsPresenter.addConfigurationsChangedListener(this);
 
@@ -241,12 +240,13 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
      */
     private void setCommandConfigurations(@NotNull List<CommandConfiguration> commandConfigurations,
                                           @Nullable CommandConfiguration commandToSelect) {
-        final DefaultActionGroup commandsList = (DefaultActionGroup)actionManager.getAction(GROUP_COMMANDS_LIST);
-
         commands.clear();
-
-        clearCommandActions(commandsList);
         commandActions.removeAll();
+
+        final DefaultActionGroup commandsList = (DefaultActionGroup)actionManager.getAction(GROUP_COMMANDS_LIST);
+        if(commandsList != null) {
+            commandActions.addAll(commandsList);
+        }
 
         Collections.sort(commandConfigurations, commandsComparator);
         CommandConfiguration prevCommand = null;
@@ -258,19 +258,12 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
             prevCommand = configuration;
         }
 
-        commandsList.addAll(commandActions);
         commands.addAll(commandConfigurations);
 
         if (commandToSelect != null) {
             setSelectedCommand(commandToSelect);
         } else {
             selectLastUsedCommand();
-        }
-    }
-
-    private void clearCommandActions(@NotNull DefaultActionGroup commandsList) {
-        for (Action action : commandActions.getChildActionsOrStubs()) {
-            commandsList.remove(action);
         }
     }
 
@@ -372,11 +365,11 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
         }
 
         registeredMachineMap.remove(machineId);
-        this.updateMachineActions();
 
         if (machine.getConfig().getName().equals(machinesListWidget.getSelectedName())) {
             machinesListWidget.selectElement(null, null);
         }
+        this.updateMachineActions();
 
         return true;
     }
@@ -433,9 +426,13 @@ public class SelectCommandComboBoxReady extends AbstractPerspectiveAction implem
             final MachineConfigDto firstMachineConfig = firstMachine.getConfig();
             final MachineConfigDto secondMachineConfig = secondMachine.getConfig();
 
+            if (firstMachineConfig.isDev()) {
+                return -1;
+            }
             if (secondMachineConfig.isDev()) {
                 return 1;
             }
+
             if (firstMachineConfig.getType().equalsIgnoreCase(secondMachineConfig.getType())) {
                 return (firstMachineConfig.getName()).compareToIgnoreCase(secondMachineConfig.getName());
             }
