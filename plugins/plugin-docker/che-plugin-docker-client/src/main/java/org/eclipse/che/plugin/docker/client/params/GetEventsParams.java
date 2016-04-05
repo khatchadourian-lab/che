@@ -20,8 +20,8 @@ import org.eclipse.che.plugin.docker.client.json.Filters;
  */
 public class GetEventsParams {
 
-    private Long sinceSecond;
-    private Long untilSecond;
+    private Long    sinceSecond;
+    private Long    untilSecond;
     private Filters filters;
 
     /**

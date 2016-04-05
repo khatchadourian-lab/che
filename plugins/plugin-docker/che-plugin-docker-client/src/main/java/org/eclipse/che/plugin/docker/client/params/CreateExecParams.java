@@ -23,7 +23,7 @@ public class CreateExecParams {
 
     /**
      * @param container
-     *         id of container
+     *         id or name of container
      */
     public CreateExecParams withContainer(String container) {
         this.container = container;

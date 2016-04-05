@@ -25,7 +25,7 @@ public class CommitParams {
 
     /**
      * @param container
-     *         source container
+     *         id or name of container
      */
     public CommitParams withContainer(String container) {
         this.container = container;

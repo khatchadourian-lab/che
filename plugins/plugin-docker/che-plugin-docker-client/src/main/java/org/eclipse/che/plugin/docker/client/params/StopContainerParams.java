@@ -34,7 +34,7 @@ public class StopContainerParams {
 
     /**
      * @param timeout
-     *         time to wait for the container to stop before killing it
+     *         time in seconds to wait for the container to stop before killing it
      */
     public StopContainerParams withTimeout(long timeout) {
         withTimeout(timeout, TimeUnit.SECONDS);

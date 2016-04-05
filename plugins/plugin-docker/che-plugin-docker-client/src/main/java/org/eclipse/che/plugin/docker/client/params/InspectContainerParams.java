@@ -17,19 +17,33 @@ package org.eclipse.che.plugin.docker.client.params;
  */
 public class InspectContainerParams {
 
-    private String container;
+    private String  container;
+    private Boolean getContainerSize;
 
     /**
      * @param container
-     *         id of container
+     *         id or name of container
      */
     public InspectContainerParams withContainer(String container) {
         this.container = container;
         return this;
     }
 
+    /**
+     * @param getContainerSize
+     *         if {@code true} it will return container size information
+     */
+    public InspectContainerParams withGetContainerSize(boolean getContainerSize) {
+        this.getContainerSize = getContainerSize;
+        return this;
+    }
+
     public String getContainer() {
         return container;
+    }
+
+    public Boolean isGetContainerSize() {
+        return getContainerSize;
     }
 
 }

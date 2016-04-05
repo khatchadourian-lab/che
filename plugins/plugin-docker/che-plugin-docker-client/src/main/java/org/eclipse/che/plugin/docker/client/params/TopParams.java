@@ -22,7 +22,7 @@ public class TopParams {
 
     /**
      * @param container
-     *         container id
+     *         container id or name
      */
     public TopParams withContainer(String container) {
         this.container = container;
@@ -33,7 +33,7 @@ public class TopParams {
      * @param psArgs
      *         ps arguments to use
      */
-    public TopParams withPsArgs(String[] psArgs) {
+    public TopParams withPsArgs(String... psArgs) {
         this.psArgs = psArgs;
         return this;
     }

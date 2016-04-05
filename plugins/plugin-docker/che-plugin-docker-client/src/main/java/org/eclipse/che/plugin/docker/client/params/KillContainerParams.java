@@ -17,7 +17,8 @@ package org.eclipse.che.plugin.docker.client.params;
  */
 public class KillContainerParams {
 
-    private String container;
+    private String  container;
+    private Integer signal;
 
     /**
      * @param container
@@ -28,8 +29,21 @@ public class KillContainerParams {
         return this;
     }
 
+    /**
+     * @param signal
+     *         code of signal, e.g. 9 in case of SIGKILL
+     */
+    public KillContainerParams withSignal(int signal) {
+        this.signal = signal;
+        return this;
+    }
+
     public String getContainer() {
         return container;
+    }
+
+    public Integer getSignal() {
+        return signal;
     }
 
 }

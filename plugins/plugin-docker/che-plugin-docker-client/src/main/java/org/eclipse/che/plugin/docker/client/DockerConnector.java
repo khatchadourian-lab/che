@@ -53,17 +53,14 @@ import org.eclipse.che.plugin.docker.client.params.CreateExecParams;
 import org.eclipse.che.plugin.docker.client.params.GetEventsParams;
 import org.eclipse.che.plugin.docker.client.params.GetExecInfoParams;
 import org.eclipse.che.plugin.docker.client.params.GetResourceParams;
-import org.eclipse.che.plugin.docker.client.params.GetSystemInfoParams;
 import org.eclipse.che.plugin.docker.client.params.InspectContainerParams;
 import org.eclipse.che.plugin.docker.client.params.InspectImageParams;
 import org.eclipse.che.plugin.docker.client.params.KillContainerParams;
-import org.eclipse.che.plugin.docker.client.params.ListImagesParams;
 import org.eclipse.che.plugin.docker.client.params.PullParams;
 import org.eclipse.che.plugin.docker.client.params.PushParams;
 import org.eclipse.che.plugin.docker.client.params.PutResourceParams;
 import org.eclipse.che.plugin.docker.client.params.RemoveContainerParams;
 import org.eclipse.che.plugin.docker.client.params.RemoveImageParams;
-import org.eclipse.che.plugin.docker.client.params.SendSignalToContainerParams;
 import org.eclipse.che.plugin.docker.client.params.StartContainerParams;
 import org.eclipse.che.plugin.docker.client.params.StartExecParams;
 import org.eclipse.che.plugin.docker.client.params.StopContainerParams;
@@ -107,6 +104,7 @@ import static javax.ws.rs.core.Response.Status.OK;
  * @author andrew00x
  * @author Alexander Garagatyi
  * @author Anton Korneta
+ * @author Mykola Morhun
  */
 @Singleton
 public class DockerConnector {
@@ -130,35 +128,23 @@ public class DockerConnector {
     }
 
     /**
-     * The same as {@link #getBuildImageId(ProgressStatus)} but without any parameters
-     *
-     * @see #getDockerException(DockerResponse)
-     */
-    public org.eclipse.che.plugin.docker.client.json.SystemInfo getSystemInfo() throws IOException {
-        return doGetSystemInfo(new GetSystemInfoParams(), dockerDaemonUri);
-    }
-
-    /**
      * Gets system-wide information.
      *
-     * @param params
-     *         parameters holder
      * @return system-wide information
      * @throws IOException
      *         when problems occurs with docker api calls
      */
-    public org.eclipse.che.plugin.docker.client.json.SystemInfo getSystemInfo(final GetSystemInfoParams params) throws IOException {
-        return doGetSystemInfo(params, dockerDaemonUri);
+    public org.eclipse.che.plugin.docker.client.json.SystemInfo getSystemInfo() throws IOException {
+        return doGetSystemInfo(dockerDaemonUri);
     }
 
     /**
-     * The same as {@link #getSystemInfo(GetSystemInfoParams)} but with additional parameter
+     * The same as {@link #getSystemInfo()} but with additional parameter
      *
      * @param dockerDaemonUri
      *         docker service URI
      */
-    protected org.eclipse.che.plugin.docker.client.json.SystemInfo doGetSystemInfo(final GetSystemInfoParams params,
-                                                                                   final URI dockerDaemonUri) throws IOException {
+    protected org.eclipse.che.plugin.docker.client.json.SystemInfo doGetSystemInfo(final URI dockerDaemonUri) throws IOException {
         try (DockerConnection connection = connectionFactory.openConnection(dockerDaemonUri)
                                                             .method("GET")
                                                             .path("/info")) {
@@ -206,34 +192,23 @@ public class DockerConnector {
     }
 
     /**
-     * The same as {@link #listImages(ListImagesParams)} but without any parameters
-     *
-     * @see #listImages(ListImagesParams)
-     */
-    public Image[] listImages() throws IOException {
-        return doListImages(new ListImagesParams(), dockerDaemonUri);
-    }
-
-    /**
      * Lists docker images.
      *
-     * @param params
-     *         parameters holder
      * @return list of docker images
      * @throws IOException
      *         when problems occurs with docker api calls
      */
-    public Image[] listImages(final ListImagesParams params) throws IOException {
-        return doListImages(params, dockerDaemonUri);
+    public Image[] listImages() throws IOException {
+        return doListImages(dockerDaemonUri);
     }
 
     /**
-     * The same as {@link #listImages(ListImagesParams)} but with additional parameter
+     * The same as {@link #listImages()} but with additional parameter
      *
      * @param dockerDaemonUri
      *         docker service URI
      */
-    protected Image[] doListImages(final ListImagesParams params, final URI dockerDaemonUri) throws IOException {
+    protected Image[] doListImages(final URI dockerDaemonUri) throws IOException {
         try (DockerConnection connection = connectionFactory.openConnection(dockerDaemonUri)
                                                             .method("GET")
                                                             .path("/images/json")) {
@@ -388,17 +363,17 @@ public class DockerConnector {
      * @throws IOException
      *         when problems occurs with docker api calls
      */
-    public void sendSignalToContainer(final SendSignalToContainerParams params) throws IOException {
-        doSendSignalToContainer(params, dockerDaemonUri);
+    public void killContainer(final KillContainerParams params) throws IOException {
+        doKillContainer(params, dockerDaemonUri);
     }
 
     /**
-     * The same as {@link #sendSignalToContainer(SendSignalToContainerParams)} but with additional parameter
+     * The same as {@link #killContainer(KillContainerParams)} but with additional parameter
      *
      * @param dockerDaemonUri
      *         docker service URI
      */
-    protected void doSendSignalToContainer(final SendSignalToContainerParams params, final URI dockerDaemonUri) throws IOException {
+    protected void doKillContainer(final KillContainerParams params, final URI dockerDaemonUri) throws IOException {
         final String container = requiredNonNull(params.getContainer(), "Send signal to container: container identifier is null");
         final Integer signal = params.getSignal();
 
@@ -429,23 +404,9 @@ public class DockerConnector {
     @Deprecated
     public void killContainer(String container) throws IOException {
         requiredNonNull(container, "Kill container: container identifier is null");
-        sendSignalToContainer(new SendSignalToContainerParams().withContainer(container)
-                                                               .withSignal(9));
-    }
-
-    /**
-     * Kills container with SIGKILL signal.
-     *
-     * @param params
-     *         parameters holder
-     * @throws IOException
-     *         when problems occurs with docker api calls
-     */
-    public void killContainer(final KillContainerParams params) throws IOException {
-        requiredNonNull(params.getContainer(), "Kill container: container identifier is null");
-        doSendSignalToContainer(new SendSignalToContainerParams().withContainer(params.getContainer())
-                                                                 .withSignal(9),
-                                dockerDaemonUri);
+        doKillContainer(new KillContainerParams().withContainer(container)
+                                                 .withSignal(9),
+                        dockerDaemonUri);
     }
 
     /**
@@ -593,10 +554,12 @@ public class DockerConnector {
      */
     protected ContainerInfo doInspectContainer(InspectContainerParams params, URI dockerDaemonUri) throws IOException {
         final String container = requiredNonNull(params.getContainer(), "Inspect container: container id is null");
+        final Boolean size = params.isGetContainerSize();
 
         try (DockerConnection connection = connectionFactory.openConnection(dockerDaemonUri)
                                                             .method("GET")
                                                             .path("/containers/" + container + "/json")) {
+            addQueryParamIfSet(connection, "size", size);
             final DockerResponse response = connection.request();
             final int status = response.getStatus();
             if (OK.getStatusCode() != status) {
@@ -813,8 +776,16 @@ public class DockerConnector {
                                final MessageProcessor<LogMessage> execOutputProcessor,
                                final URI dockerDaemonUri) throws IOException {
         final String execId = requiredNonNull(params.getExecId(), "Start exec: exec id is null");
+        final Boolean detach = params.isDetach();
+        final Boolean tty = params.isTty();
 
         final ExecStart execStart = new ExecStart().withDetach(execOutputProcessor == null);
+        if (detach != null) {
+            execStart.withDetach(detach);
+        }
+        if (tty != null) {
+            execStart.withTty(tty);
+        }
         final String entity = JsonHelper.toJson(execStart, FIRST_LETTER_LOWERCASE);
         final List<Pair<String, ?>> headers = new ArrayList<>(2);
         headers.add(Pair.of("Content-Type", MediaType.APPLICATION_JSON));
@@ -825,6 +796,7 @@ public class DockerConnector {
                                                             .path("/exec/" + execId + "/start")
                                                             .headers(headers)
                                                             .entity(entity)) {
+
             final DockerResponse response = connection.request();
             final int status = response.getStatus();
             // According to last doc (https://docs.docker.com/reference/api/docker_remote_api_v1.15/#exec-start) status must be 201 but
@@ -1208,8 +1180,10 @@ public class DockerConnector {
         final Boolean doForcePull = params.isDoForcePull();
         final Long memoryLimit = params.getMemoryLimit();
         final Long memorySwapLimit = params.getMemorySwapLimit();
-        final File[] files = requiredNonNull(params.getFiles(), "Build image: dockerfile is not given");
+        final List<File> filesList = requiredNonNull(params.getFiles(), "Build image: dockerfile is not set");
         AuthConfigs authConfigs = params.getAuthConfigs();
+
+        File[] files = (File[]) filesList.toArray();
 
         final File tar = Files.createTempFile(null, ".tar").toFile();
         try {
@@ -1752,9 +1726,29 @@ public class DockerConnector {
 
     @Deprecated
     public void startContainer(String container, HostConfig hostConfig) throws IOException {
-        doStartContainer(new StartContainerParams().withContainer(container)
-                                                   .withHostConfig(hostConfig),
-                         dockerDaemonUri);
+        final List<Pair<String, ?>> headers = new ArrayList<>(2);
+        headers.add(Pair.of("Content-Type", MediaType.APPLICATION_JSON));
+        final String entity = hostConfig == null ? "{}" : JsonHelper.toJson(hostConfig, FIRST_LETTER_LOWERCASE);
+        headers.add(Pair.of("Content-Length", entity.getBytes().length));
+
+        try (DockerConnection connection = connectionFactory.openConnection(dockerDaemonUri)
+                                                            .method("POST")
+                                                            .path("/containers/" + container + "/start")
+                                                            .headers(headers)
+                                                            .entity(entity)) {
+            final DockerResponse response = connection.request();
+            final int status = response.getStatus();
+            if (!(NO_CONTENT.getStatusCode() == status || NOT_MODIFIED.getStatusCode() == status)) {
+
+                final DockerException dockerException = getDockerException(response);
+                if (OK.getStatusCode() == status) {
+                    // docker API 1.20 returns 200 with warning message about usage of loopback docker backend
+                    LOG.warn(dockerException.getLocalizedMessage());
+                } else {
+                    throw dockerException;
+                }
+            }
+        }
     }
 
     /**
@@ -1777,18 +1771,14 @@ public class DockerConnector {
      */
     protected void doStartContainer(final StartContainerParams params, final URI dockerDaemonUri) throws IOException {
         final String container = requiredNonNull(params.getContainer(), "Start container: container id is null");
-        final HostConfig hostConfig = params.getHostConfig();
 
         final List<Pair<String, ?>> headers = new ArrayList<>(2);
         headers.add(Pair.of("Content-Type", MediaType.APPLICATION_JSON));
-        final String entity = hostConfig == null ? "{}" : JsonHelper.toJson(hostConfig, FIRST_LETTER_LOWERCASE);
-        headers.add(Pair.of("Content-Length", entity.getBytes().length));
 
         try (DockerConnection connection = connectionFactory.openConnection(dockerDaemonUri)
                                                             .method("POST")
                                                             .path("/containers/" + container + "/start")
-                                                            .headers(headers)
-                                                            .entity(entity)) {
+                                                            .headers(headers)) {
             final DockerResponse response = connection.request();
             final int status = response.getStatus();
             if (!(NO_CONTENT.getStatusCode() == status || NOT_MODIFIED.getStatusCode() == status)) {

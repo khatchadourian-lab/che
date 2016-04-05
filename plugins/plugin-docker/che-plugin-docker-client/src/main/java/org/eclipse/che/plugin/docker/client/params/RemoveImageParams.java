@@ -22,7 +22,7 @@ public class RemoveImageParams {
 
     /**
      * @param image
-     *         image name
+     *         image identifier, either id or name
      */
     public RemoveImageParams withImage(String image) {
         this.image = image;
@@ -31,7 +31,7 @@ public class RemoveImageParams {
 
     /**
      * @param force
-     *         force removal of the image
+     *         {@code true} means remove an image anyway, despite using of this image
      */
     public RemoveImageParams withForce(boolean force) {
         this.force = force;

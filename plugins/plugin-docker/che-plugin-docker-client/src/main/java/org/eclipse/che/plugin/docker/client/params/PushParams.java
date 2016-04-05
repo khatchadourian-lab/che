@@ -25,7 +25,7 @@ public class PushParams {
 
     /**
      * @param repository
-     *         full repository name
+     *         repository name
      */
     public PushParams withRepository(String repository) {
         this.repository = repository;

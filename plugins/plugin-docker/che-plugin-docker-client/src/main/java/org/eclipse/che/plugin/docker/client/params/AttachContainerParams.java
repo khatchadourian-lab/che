@@ -19,12 +19,12 @@ import org.eclipse.che.plugin.docker.client.MessageProcessor;
  */
 public class AttachContainerParams {
 
-    private String container;
+    private String  container;
     private Boolean stream;
 
     /**
      * @param container
-     *         id of container
+     *         id or name of container
      */
     public AttachContainerParams withContainer(String container) {
         this.container = container;
@@ -33,8 +33,11 @@ public class AttachContainerParams {
 
     /**
      * @param stream
-     *         if {@code true} gets 'live' stream from container.
-     *         Note, that 'live' stream blocks until container is running.
+     *         if {@code true} gets stream from container.
+     *         Note, that live stream blocks until container is running.
+     *         When using the TTY setting is enabled when create container, the stream is the raw data
+     *          from the process PTY and client’s stdin.
+     *         When the TTY is disabled, then the stream is multiplexed to separate stdout and stderr.
      */
     public AttachContainerParams withStream(boolean stream) {
         this.stream = stream;

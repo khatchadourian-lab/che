@@ -18,16 +18,23 @@ import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
  * @author Mykola Morhun
  */
 public class CreateContainerParams {
-    /** configuration of future container */
-    private ContainerConfig containerConfig;
-    /** assign the specified name to the container. Must match /?[a-zA-Z0-9_-]+ */
-    private String containerName;
 
+    private ContainerConfig containerConfig;
+    private String          containerName;
+
+    /**
+     * @param containerConfig
+     *         configuration of future container
+     */
     public CreateContainerParams withContainerConfig(ContainerConfig containerConfig) {
         this.containerConfig = containerConfig;
         return this;
     }
 
+    /**
+     * @param containerName
+     *         assign the specified name to the container. Must match /?[a-zA-Z0-9_-]+
+     */
     public CreateContainerParams withContainerName(String containerName) {
         this.containerName = containerName;
         return this;

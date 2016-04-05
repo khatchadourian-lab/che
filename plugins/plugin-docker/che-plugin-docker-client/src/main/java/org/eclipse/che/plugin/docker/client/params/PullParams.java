@@ -25,7 +25,7 @@ public class PullParams {
 
     /**
      * @param image
-     *         full repository name to be applied to newly created image
+     *         name of the image to pull
      */
     public PullParams withImage(String image) {
         this.image = image;
@@ -43,7 +43,7 @@ public class PullParams {
 
     /**
      * @param registry
-     *         registry url
+     *         host and port of registry, e.g. localhost:5000
      */
     public PullParams withRegistry(String registry) {
         this.registry = registry;

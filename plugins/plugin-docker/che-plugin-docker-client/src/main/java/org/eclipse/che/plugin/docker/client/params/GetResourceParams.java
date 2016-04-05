@@ -22,7 +22,7 @@ public class GetResourceParams {
 
     /**
      * @param container
-     *         container id
+     *         container id or name
      */
     public GetResourceParams withContainer(String container) {
         this.container = container;
@@ -31,7 +31,9 @@ public class GetResourceParams {
 
     /**
      * @param sourcePath
-     *         path to file or directory inside specified container
+     *         resource in the container’s filesystem to archive. Required.
+     *         The resource specified by path must exist. It should end in '/' or '/.'
+     *         A symlink is always resolved to its target.
      */
     public GetResourceParams withSourcePath(String sourcePath) {
         this.sourcePath = sourcePath;

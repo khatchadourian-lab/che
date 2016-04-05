@@ -17,7 +17,7 @@ package org.eclipse.che.plugin.docker.client.params;
  */
 public class RemoveContainerParams {
 
-    private String container;
+    private String  container;
     private Boolean force;
     private Boolean removeVolumes;
 

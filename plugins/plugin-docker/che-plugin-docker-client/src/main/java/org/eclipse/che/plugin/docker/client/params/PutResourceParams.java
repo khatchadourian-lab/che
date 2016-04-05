@@ -19,14 +19,14 @@ import java.io.InputStream;
  */
 public class PutResourceParams {
 
-    private String container;
-    private String targetPath;
+    private String      container;
+    private String      targetPath;
     private InputStream sourceStream;
-    private Boolean noOverwriteDirNonDir;
+    private Boolean     noOverwriteDirNonDir;
 
     /**
      * @param container
-     *         container id
+     *         container id or name
      */
     public PutResourceParams withContainer(String container) {
         this.container = container;
@@ -35,7 +35,8 @@ public class PutResourceParams {
 
     /**
      * @param targetPath
-     *         path to file or directory inside specified container
+     *         path to a directory in the container to extract the archive’s contents into. Required.
+     *         If not an absolute path, it is relative to the container’s root directory. The path resource must exist.
      */
     public PutResourceParams withTargetPath(String targetPath) {
         this.targetPath = targetPath;
@@ -44,7 +45,8 @@ public class PutResourceParams {
 
     /**
      * @param sourceStream
-     *         stream of files from source container
+     *         stream of files from source container, must be obtained from another container
+     *          using {@link org.eclipse.che.plugin.docker.client.DockerConnector#getResource(GetResourceParams)}
      */
     public PutResourceParams withSourceStream(InputStream sourceStream) {
         this.sourceStream = sourceStream;
@@ -53,8 +55,8 @@ public class PutResourceParams {
 
     /**
      * @param noOverwriteDirNonDir
-     *         If "false" then it will be an error if unpacking the given content would cause an existing
-     *          directory to be replaced with a non-directory or other resource and vice versa.
+     *         if {@code true} then it will be an error if unpacking the given content would cause
+     *          an existing directory to be replaced with a non-directory and vice versa.
      */
     public PutResourceParams withNoOverwriteDirNonDir(Boolean noOverwriteDirNonDir) {
         this.noOverwriteDirNonDir = noOverwriteDirNonDir;

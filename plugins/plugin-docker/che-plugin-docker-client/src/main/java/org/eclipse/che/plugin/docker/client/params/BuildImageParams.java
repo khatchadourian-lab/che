@@ -14,6 +14,9 @@ import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.dto.AuthConfigs;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#buildImage(BuildImageParams, ProgressMonitor)}.
@@ -22,12 +25,12 @@ import java.io.File;
  */
 public class BuildImageParams {
 
-    private String repository;
+    private String      repository;
     private AuthConfigs authConfigs;
-    private Boolean doForcePull;
-    private Long memoryLimit;
-    private Long memorySwapLimit;
-    private File[] files;
+    private Boolean     doForcePull;
+    private Long        memoryLimit;
+    private Long        memorySwapLimit;
+    private List<File>  files;
 
     /**
      * @param repository
@@ -40,7 +43,7 @@ public class BuildImageParams {
 
     /**
      * @param authConfigs
-     *         authentication configuration for private registries. Can be null
+     *         authentication configuration for registries. Can be null
      */
     public BuildImageParams withAuthConfigs(AuthConfigs authConfigs) {
         this.authConfigs = authConfigs;
@@ -49,7 +52,7 @@ public class BuildImageParams {
 
     /**
      * @param doForcePull
-     *         is pull with force
+     *         if {@code true} attempts to pull the image even if an older image exists locally
      */
     public BuildImageParams withDoForcePull(boolean doForcePull) {
         this.doForcePull = doForcePull;
@@ -58,7 +61,7 @@ public class BuildImageParams {
 
     /**
      * @param memoryLimit
-     *         memory limit for build in bytes
+     *         RAM memory limit for build in bytes
      */
     public BuildImageParams withMemoryLimit(long memoryLimit) {
         this.memoryLimit = memoryLimit;
@@ -75,12 +78,34 @@ public class BuildImageParams {
     }
 
     /**
+     * Sets list of files for creation docker image.
+     *
      * @param files
      *         files that are needed for creation docker images (e.g. file of directories used in ADD instruction in Dockerfile).
      *         One of them must be Dockerfile.
      */
     public BuildImageParams withFiles(File... files) {
-        this.files = files;
+        this.files = Arrays.asList(files);
+        return this;
+    }
+
+    /**
+     * Adds files to the file list.
+     * @see {@link #withFiles(File...)}
+     *
+     * @param files
+     *         files to add to image
+     */
+    public BuildImageParams addFiles(File... files) {
+        this.files.addAll(Arrays.asList(files));
+        return this;
+    }
+
+    /**
+     * The same as {@link #addFiles(File...)}, but for single file.
+     */
+    public BuildImageParams addFile(File file) {
+        this.files.add(file);
         return this;
     }
 
@@ -104,7 +129,7 @@ public class BuildImageParams {
         return memorySwapLimit;
     }
 
-    public File[] getFiles() {
+    public List<File> getFiles() {
         return files;
     }
 
