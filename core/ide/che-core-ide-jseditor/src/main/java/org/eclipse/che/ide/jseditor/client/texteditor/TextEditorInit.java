@@ -4,9 +4,9 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * <p/>
  * Contributors:
- *   Codenvy, S.A. - initial API and implementation
+ * Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
 package org.eclipse.che.ide.jseditor.client.texteditor;
 
@@ -146,7 +146,7 @@ public class TextEditorInit<T extends EditorWidget> {
             return;
         }
         // add the renderers (event handler) before the model (event source)
-        if(textEditor instanceof HasAnnotationRendering){
+        if (textEditor instanceof HasAnnotationRendering) {
             ((HasAnnotationRendering)textEditor).configure(annotationModel, documentHandle);
         }
         annotationModel.setDocumentHandle(documentHandle);
@@ -229,9 +229,9 @@ public class TextEditorInit<T extends EditorWidget> {
                 }
             };
             final HasKeybindings hasKeybindings = this.textEditor.getHasKeybindings();
-            if(UserAgent.isMac()){
-                hasKeybindings.addKeybinding(new Keybinding(false,false,false, true, KeyCode.SPACE, action), CONTENT_ASSIST);
-                hasKeybindings.addKeybinding(new Keybinding(false,false,true, true, KeyCode.SPACE, action), CONTENT_ASSIST);
+            if (UserAgent.isMac()) {
+                hasKeybindings.addKeybinding(new Keybinding(false, false, false, true, KeyCode.SPACE, action), CONTENT_ASSIST);
+                hasKeybindings.addKeybinding(new Keybinding(false, false, true, true, KeyCode.SPACE, action), CONTENT_ASSIST);
             } else {
                 hasKeybindings.addKeybinding(new Keybinding(true, false, false, false, KeyCode.SPACE, action), CONTENT_ASSIST);
             }
@@ -351,14 +351,14 @@ public class TextEditorInit<T extends EditorWidget> {
                     }
                     // don't apply the interceptors if the range end doesn't belong to the same partition
                     final TextPosition to = change.getTo();
-                    if (to != null && ! from.equals(to)) {
+                    if (to != null && !from.equals(to)) {
                         final int endOffset = documentHandle.getDocument().getIndexFromPosition(to);
                         if (endOffset < region.getOffset() || endOffset > region.getOffset() + region.getLength()) {
                             return;
                         }
                     }
                     // stop as soon as one interceptors has modified the content
-                    for (final TextChangeInterceptor interceptor: filteredInterceptors) {
+                    for (final TextChangeInterceptor interceptor : filteredInterceptors) {
                         final TextChange result = interceptor.processChange(change,
                                                                             documentHandle.getDocument().getReadOnlyDocument());
                         if (result != null) {
