@@ -12,6 +12,7 @@ package org.eclipse.che.ide.jseditor.client.preference.inject;
 
 
 import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.gwt.inject.client.multibindings.GinMultibinder;
 
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;
@@ -19,6 +20,9 @@ import org.eclipse.che.ide.api.preferences.PreferencePagePresenter;
 import org.eclipse.che.ide.jseditor.client.preference.EditorPreferencePresenter;
 import org.eclipse.che.ide.jseditor.client.preference.EditorPreferenceView;
 import org.eclipse.che.ide.jseditor.client.preference.EditorPreferenceViewImpl;
+import org.eclipse.che.ide.jseditor.client.preference.editorsettings.property.EditorPropertyWidget;
+import org.eclipse.che.ide.jseditor.client.preference.editorsettings.property.EditorPropertyWidgetFactory;
+import org.eclipse.che.ide.jseditor.client.preference.editorsettings.property.EditorPropertyWidgetImpl;
 import org.eclipse.che.ide.jseditor.client.preference.keymaps.KeyMapsPreferencePresenter;
 import org.eclipse.che.ide.jseditor.client.preference.keymaps.KeymapsPreferenceView;
 import org.eclipse.che.ide.jseditor.client.preference.keymaps.KeymapsPreferenceViewImpl;
@@ -36,5 +40,8 @@ public class EditorPreferencesGinModule extends AbstractGinModule {
         bind(EditorPreferenceView.class).to(EditorPreferenceViewImpl.class);
         bind(KeymapsPreferenceView.class).to(KeymapsPreferenceViewImpl.class);
         bind(KeyMapsPreferencePresenter.class);
+
+        install(new GinFactoryModuleBuilder().implement(EditorPropertyWidget.class, EditorPropertyWidgetImpl.class)
+                                             .build(EditorPropertyWidgetFactory.class));
     }
 }

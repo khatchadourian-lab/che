@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.eclipse.che.ide.jseditor.client.editortype.EditorType;
 import org.eclipse.che.ide.jseditor.client.keymap.Keymap;
 import org.eclipse.che.ide.jseditor.client.keymap.KeymapValuesHolder;
+import org.eclipse.che.ide.util.loging.Log;
 
 import elemental.js.util.JsArrayOfString;
 import elemental.js.util.JsMapFromStringToString;
@@ -93,6 +94,7 @@ public class KeymapPrefReader {
     public void storePrefs(final KeymapValuesHolder valuesHolder) {
         final EditorPreferences preferences = this.preferenceReader.getPreferences();
         final JsMapFromStringToString keymaps = preferences.getKeymaps();
+        Log.error(getClass(), "***** keymaps "+ keymaps.toString());
 
         for (final Entry<EditorType, Keymap> entry : valuesHolder) {
             if (entry.getKey() != null && entry.getValue() != null) {

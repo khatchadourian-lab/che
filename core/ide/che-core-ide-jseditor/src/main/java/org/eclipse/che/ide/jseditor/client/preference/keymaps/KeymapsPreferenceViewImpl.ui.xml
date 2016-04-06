@@ -14,22 +14,29 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:c='urn:import:com.google.gwt.user.cellview.client'
              xmlns:my='urn:import:org.eclipse.che.ide.jseditor.client.preference'>
+    <!--xmlns:che='urn:import:org.eclipse.che.ide.ui.listbox'>-->
 
     <ui:with type="org.eclipse.che.ide.jseditor.client.preference.EditorPrefLocalizationConstant" field="constants" />
     <ui:style src="org/eclipse/che/ide/api/ui/style.css">
         .section {
             margin-top: 1em;
             margin-bottom: 0.2em;
-            font-size: titleFontSize;
         }
         .tables {
-            min-width: fill-available; 
-            min-width: -webkit-fill-available; 
+            min-width: fill-available;
+            min-width: -webkit-fill-available;
         }
+
+        /*.listBox {*/
+            /*float: right;*/
+            /*margin-right: 6px;*/
+            /*width: 75px;*/
+        /*}*/
     </ui:style>
 
     <g:HTMLPanel>
         <g:Label addStyleNames="{style.section}" text="{constants.keybindingsSectionLabel}" />
         <c:CellTable ui:field="keyBindingSelection" addStyleNames="{style.tables}" />
+        <!--<che:CustomListBox ui:field="keyBindingsBox" addStyleNames="{style.listBox}"/>-->
     </g:HTMLPanel>
 </ui:UiBinder>

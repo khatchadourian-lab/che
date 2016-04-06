@@ -80,4 +80,51 @@ public interface JsEditorConstants extends Messages {
     @DefaultMessage("Failed to update content of file(s)")
     String failedToUpdateContentOfFiles();
 
+    @DefaultMessage("Expand Tab:")
+    String propertyExpandTab();
+
+    @DefaultMessage("Tab Size:")
+    String propertyTabSize();
+
+    @DefaultMessage("Autopair (Parentheses):")
+    String propertyAutoPairParentheses();
+
+    @DefaultMessage("Autopair {Braces}:")
+    String propertyAutoPairBraces();
+
+    @DefaultMessage("Autopair [Square] Brackets:")
+    String propertyAutoPairSquareBrackets();
+
+    @DefaultMessage("Autopair <Angle> Brackets:")
+    String propertyAutoPairAngelBrackets();
+
+    @DefaultMessage("Autopair \"Quotations\":")
+    String propertyAutoPairQuotations();
+
+    @DefaultMessage("Autocomplete /** Block Comments */:")
+    String propertyAutoCompleteComments();
+
+    @DefaultMessage("Smart Indentation:")
+    String propertySmartIndentation();
+
+    @DefaultMessage("Show Annotation Ruler:")
+    String propertyShowAnnotationRuler();
+
+    @DefaultMessage("Show Line Number Ruler:")
+    String propertyShowLineNumberRuler();
+
+    @DefaultMessage("Show Folding Ruler:")
+    String propertyShowFoldingRuler();
+
+    @DefaultMessage("Show Overview Ruler:")
+    String propertyShowOverviewRuler();
+
+    @DefaultMessage("Show Zoom Ruler:")
+    String propertyShowZoomRuler();
+
+    @DefaultMessage("Show Occurrences:")
+    String propertyShowOccurrences();
+
+    @DefaultMessage("Show Content Assist automatically:")
+    String propertyShowContentAssistAutomatically();
 }

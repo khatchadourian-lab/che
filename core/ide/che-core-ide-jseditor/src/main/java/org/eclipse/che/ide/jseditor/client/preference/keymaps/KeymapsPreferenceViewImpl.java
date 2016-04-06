@@ -21,6 +21,7 @@ import org.eclipse.che.ide.jseditor.client.keymap.Keymap;
 import org.eclipse.che.ide.jseditor.client.keymap.KeymapValuesHolder;
 import org.eclipse.che.ide.jseditor.client.preference.EditorPrefLocalizationConstant;
 import org.eclipse.che.ide.jseditor.client.preference.EditorPreferenceResource;
+import org.eclipse.che.ide.ui.listbox.CustomListBox;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -59,6 +60,9 @@ public class KeymapsPreferenceViewImpl extends Composite implements KeymapsPrefe
     @UiField(provided = true)
     CellTable<EditorType> keyBindingSelection;
 
+
+//    @UiField
+//    CustomListBox keyBindingsBox;
 
     @Inject
     public KeymapsPreferenceViewImpl(final EditorTypeRegistry editorTypeRegistry,

@@ -20,6 +20,7 @@ import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.api.user.gwt.client.UserProfileServiceClient;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.preferences.PreferencesManager;
+import org.eclipse.che.ide.util.loging.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ import java.util.Map;
 /**
  * The implementation of {@link PreferencesManager} for managing user preference.
  *
- * @author <a href="mailto:aplotnikov@codenvy.com">Andrey Plotnikov</a>
+ * @author Andrey Plotnikov
  */
 @Singleton
 public class PreferencesManagerImpl implements PreferencesManager {
@@ -62,6 +63,8 @@ public class PreferencesManagerImpl implements PreferencesManager {
     /** {@inheritDoc} */
     @Override
     public void setValue(String preference, String value) {
+        Log.error(getClass(), "preference key " + preference);
+        Log.error(getClass(), "preference value " + value);
         changedPreferences.put(preference, value);
     }
 

@@ -212,7 +212,7 @@ public class OrionEditorWidget extends CompositeEditorWidget implements HasChang
 
         // SourceCodeActions (typing)
         json.put("autoPairParentheses", JSONBoolean.getInstance(true));
-        json.put("autoPairBraces", JSONBoolean.getInstance(true));
+        json.put("autoPairBraces", JSONBoolean.getInstance(false));
         json.put("autoPairSquareBrackets", JSONBoolean.getInstance(true));
         json.put("autoPairAngleBrackets", JSONBoolean.getInstance(true));
         json.put("autoPairQuotations", JSONBoolean.getInstance(true));
@@ -767,6 +767,7 @@ public class OrionEditorWidget extends CompositeEditorWidget implements HasChang
 
         @Override
         public void apply(OrionEditorViewOverlay arg) throws OperationException {
+            Log.error(getClass(), "=== apply ===");
             editorViewOverlay = arg;
             editorOverlay = arg.getEditor();
 
@@ -802,6 +803,7 @@ public class OrionEditorWidget extends CompositeEditorWidget implements HasChang
             assistWidget = contentAssistWidgetFactory.create(OrionEditorWidget.this, cheContentAssistMode);
             gutter = initBreakpointRuler(moduleHolder);
 
+            Log.error(getClass(), "=== before update settings ===");
             editorViewOverlay.updateSettings(getEditorSettings());
 
             widgetInitializedCallback.initialized(OrionEditorWidget.this);

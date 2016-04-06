@@ -28,6 +28,8 @@ public class EditorPreferenceViewImpl extends Composite implements EditorPrefere
 
     @UiField
     SimplePanel keymapsSection;
+    @UiField
+    SimplePanel editorPropertiesSection;
 
     @Inject
     public EditorPreferenceViewImpl() {
@@ -37,6 +39,11 @@ public class EditorPreferenceViewImpl extends Composite implements EditorPrefere
     @Override
     public AcceptsOneWidget getKeymapsContainer() {
         return this.keymapsSection;
+    }
+
+    @Override
+    public AcceptsOneWidget getEditorPropertiesContainer() {
+        return editorPropertiesSection;
     }
 
     /** UI binder interface for the {@link EditorPreferenceViewImpl} component. */
