@@ -29,7 +29,7 @@
             margin: 1px;
         }
 
-        .section {
+        .checkBoxesSection {
             display: -webkit-flex;
             display: flex;
             -webkit-flex-direction: column;
@@ -40,7 +40,7 @@
     </ui:style>
 
     <g:HTMLPanel addStyleNames="{style.emptyBorder} {style.mainPanel}" debugId="git-commit-mainForm">
-        <div class="{style.section} {style.spacing}"><!-- Late 'git add' section -->
+        <div class="{style.checkBoxesSection} {style.spacing}"><!-- Late 'git add' section -->
             <g:CheckBox ui:field="addAll" HTML="{locale.commitAllFieldTitle}"
                         addStyleNames="{res.gitCSS.textFont} {style.emptyBorder}"
                         debugId="git-commit-addAll"/>
@@ -50,8 +50,6 @@
             <g:CheckBox ui:field="onlySelection" HTML="{locale.commitOnlySelectionFieldTitle}"
                         addStyleNames="{res.gitCSS.textFont} {style.emptyBorder}"
                         debugId="git-commit-onlySelection"/>
-        </div>
-        <div class="{style.section} {style.spacing}"><!-- Commit modifiers -->
             <g:CheckBox ui:field="amend" HTML="{locale.commitAmendFieldTitle}"
                         addStyleNames="{res.gitCSS.textFont} {style.emptyBorder}" debugId="git-commit-amend"/>
         </div>
