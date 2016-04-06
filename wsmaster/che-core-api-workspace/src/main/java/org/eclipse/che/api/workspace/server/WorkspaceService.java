@@ -741,7 +741,7 @@ public class WorkspaceService extends Service {
                        .build();
     }
 
-    private WorkspaceDto injectLinks(WorkspaceDto workspace) {
+    protected WorkspaceDto injectLinks(WorkspaceDto workspace) {
         final UriBuilder uriBuilder = getServiceContext().getServiceUriBuilder();
         final List<Link> links = new ArrayList<>();
         // add common workspace links
