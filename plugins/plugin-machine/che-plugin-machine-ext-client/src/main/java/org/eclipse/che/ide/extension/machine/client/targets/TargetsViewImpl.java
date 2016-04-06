@@ -14,10 +14,16 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Event;
@@ -40,6 +46,7 @@ import org.eclipse.che.ide.ui.list.CategoriesList;
 import org.eclipse.che.ide.ui.list.Category;
 import org.eclipse.che.ide.ui.list.CategoryRenderer;
 import org.eclipse.che.ide.ui.window.Window;
+import org.eclipse.che.ide.util.StringUtils;
 import org.vectomatic.dom.svg.ui.SVGImage;
 
 import java.util.ArrayList;
@@ -96,12 +103,16 @@ public class TargetsViewImpl extends Window implements TargetsView {
     TextBox                         password;
 
     @UiField
+    FlowPanel                       operationPanel;
+
+    @UiField
     FlowPanel                       footer;
 
     private Button                  closeButton;
 
     private Button                  saveButton;
     private Button                  cancelButton;
+    private Button                  connectButton;
 
     @Inject
     public TargetsViewImpl(org.eclipse.che.ide.Resources resources,
@@ -147,6 +158,7 @@ public class TargetsViewImpl extends Window implements TargetsView {
         saveButton = createButton(coreLocale.save(), "targets.button.save", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                delegate.onSaveClicked();
             }
         });
         saveButton.addStyleName(this.resources.windowCss().primaryButton());
@@ -155,9 +167,56 @@ public class TargetsViewImpl extends Window implements TargetsView {
         cancelButton = createButton(coreLocale.cancel(), "targets.button.cancel", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                delegate.onCancelClicked();
             }
         });
         footer.add(cancelButton);
+
+        connectButton = createButton("Connect", "targets.button.connect", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                delegate.onConnectClicked();
+            }
+        });
+        connectButton.addStyleName(this.resources.windowCss().primaryButton());
+        operationPanel.add(connectButton);
+
+
+        targetName.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent keyUpEvent) {
+                delegate.onTargetNameChanged(targetName.getValue());
+            }
+        });
+
+        host.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent keyUpEvent) {
+                delegate.onHostChanged(host.getValue());
+            }
+        });
+
+        port.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent keyUpEvent) {
+                delegate.onPortChanged(port.getValue());
+            }
+        });
+
+        userName.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent keyUpEvent) {
+                delegate.onUserNameChanged(userName.getValue());
+            }
+        });
+
+        password.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent keyUpEvent) {
+                delegate.onPasswordChanged(password.getValue());
+            }
+        });
+
     }
 
     @Override
@@ -196,19 +255,19 @@ public class TargetsViewImpl extends Window implements TargetsView {
     }
 
     @Override
-    public void showRecipes(List<RecipeDescriptor> recipes) {
-        HashMap<String, List<RecipeDescriptor>> categories = new HashMap<>();
-        for (RecipeDescriptor recipe : recipes) {
-            List<RecipeDescriptor> categoryRecipes = categories.get(recipe.getType());
-            if (categoryRecipes == null) {
-                categoryRecipes = new ArrayList<>();
-                categories.put(recipe.getType(), categoryRecipes);
+    public void showTargets(List<Target> targets) {
+        HashMap<String, List<Target>> categories = new HashMap<>();
+        for (Target target : targets) {
+            List<Target> categoryTargets = categories.get(target.getType());
+            if (categoryTargets == null) {
+                categoryTargets = new ArrayList<>();
+                categories.put(target.getType(), categoryTargets);
             }
-            categoryRecipes.add(recipe);
+            categoryTargets.add(target);
         }
 
         List<Category<?>> categoriesList = new ArrayList<>();
-        for (Map.Entry<String, List<RecipeDescriptor>> entry : categories.entrySet()) {
+        for (Map.Entry<String, List<Target>> entry : categories.entrySet()) {
             categoriesList.add(new Category<>(entry.getKey(), categoriesRenderer, entry.getValue(), categoriesEventDelegate));
         }
 
@@ -218,6 +277,11 @@ public class TargetsViewImpl extends Window implements TargetsView {
         list.render(categoriesList);
     }
 
+    @Override
+    public void selectTarget(Target target) {
+        list.selectElement(target);
+    }
+
     private void ensureSSHCategoryExists(List<Category<?>> categoriesList) {
         for (Category<?> category : categoriesList) {
             if ("ssh".equalsIgnoreCase(category.getTitle())) {
@@ -225,10 +289,10 @@ public class TargetsViewImpl extends Window implements TargetsView {
             }
         }
 
-        categoriesList.add(new Category<>("ssh", categoriesRenderer, new ArrayList<RecipeDescriptor>(), categoriesEventDelegate));
+        categoriesList.add(new Category<>("ssh", categoriesRenderer, new ArrayList<Target>(), categoriesEventDelegate));
     }
 
-    private SpanElement renderCategoryHeader(final Category<RecipeDescriptor> category) {
+    private SpanElement renderCategoryHeader(final Category<Target> category) {
         SpanElement categoryHeaderElement = Document.get().createSpanElement();
         categoryHeaderElement.setClassName(commandResources.getCss().categoryHeader());
 
@@ -237,54 +301,59 @@ public class TargetsViewImpl extends Window implements TargetsView {
         iconElement.getStyle().setPaddingLeft(2, Style.Unit.PX);
         categoryHeaderElement.appendChild(iconElement);
 
+        Icon icon = iconRegistry.getIconIfExist(category.getTitle() + ".runtime.icon");
+        if (icon != null) {
+            iconElement.appendChild(icon.getSVGImage().getElement());
+        }
+
         SpanElement textElement = Document.get().createSpanElement();
         categoryHeaderElement.appendChild(textElement);
         textElement.setInnerText(category.getTitle());
 
-        SpanElement buttonElement = Document.get().createSpanElement();
-        buttonElement.appendChild(commandResources.addCommandButton().getSvg().getElement());
-        categoryHeaderElement.appendChild(buttonElement);
+        if (!"docker".equalsIgnoreCase(category.getTitle())) {
+            // Add button to create a target
+            SpanElement buttonElement = Document.get().createSpanElement();
+            buttonElement.appendChild(commandResources.addCommandButton().getSvg().getElement());
+            categoryHeaderElement.appendChild(buttonElement);
 
-        Event.sinkEvents(buttonElement, Event.ONCLICK);
-        Event.setEventListener(buttonElement, new EventListener() {
-            @Override
-            public void onBrowserEvent(Event event) {
-                event.stopPropagation();
-                event.preventDefault();
-                delegate.onAddTarget(category.getTitle());
-            }
-        });
-
-        Icon icon = iconRegistry.getIconIfExist(category.getTitle() + ".runtime.icon");
-        if (icon != null) {
-            final SVGImage iconSVG = icon.getSVGImage();
-            if (iconSVG != null) {
-                iconElement.appendChild(iconSVG.getElement());
-                return categoryHeaderElement;
-            }
+            Event.sinkEvents(buttonElement, Event.ONCLICK);
+            Event.setEventListener(buttonElement, new EventListener() {
+                @Override
+                public void onBrowserEvent(Event event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    delegate.onAddTarget(category.getTitle());
+                }
+            });
+        } else {
+            // Add empty span for properly aligning items
+            categoryHeaderElement.appendChild(Document.get().createSpanElement());
         }
 
         return categoryHeaderElement;
     }
 
-    private final CategoryRenderer<RecipeDescriptor> categoriesRenderer =
-            new CategoryRenderer<RecipeDescriptor>() {
+    private final CategoryRenderer<Target> categoriesRenderer =
+            new CategoryRenderer<Target>() {
                 @Override
-                public void renderElement(Element element, RecipeDescriptor data) {
+                public void renderElement(Element element, Target data) {
                     element.setInnerText(data.getName());
+                    if (data.getRecipe() == null) {
+                        element.getStyle().setProperty("color", "gray");
+                    }
                 }
 
                 @Override
-                public SpanElement renderCategory(Category<RecipeDescriptor> category) {
+                public SpanElement renderCategory(Category<Target> category) {
                     return renderCategoryHeader(category);
                 }
             };
 
-    private final Category.CategoryEventDelegate<RecipeDescriptor> categoriesEventDelegate =
-            new Category.CategoryEventDelegate<RecipeDescriptor>() {
+    private final Category.CategoryEventDelegate<Target> categoriesEventDelegate =
+            new Category.CategoryEventDelegate<Target>() {
                 @Override
-                public void onListItemClicked(Element listItemBase, RecipeDescriptor itemData) {
-                    delegate.onRecipeSelected(itemData);
+                public void onListItemClicked(Element listItemBase, Target target) {
+                    delegate.onTargetSelected(target);
                 }
             };
 
@@ -298,8 +367,18 @@ public class TargetsViewImpl extends Window implements TargetsView {
     }
 
     @Override
+    public String getTargetName() {
+        return targetName.getValue();
+    }
+
+    @Override
     public void setHost(String host) {
         this.host.setValue(host);
+    }
+
+    @Override
+    public String getHost() {
+        return host.getValue();
     }
 
     @Override
@@ -308,13 +387,28 @@ public class TargetsViewImpl extends Window implements TargetsView {
     }
 
     @Override
+    public String getPort() {
+        return port.getValue();
+    }
+
+    @Override
     public void setUserName(String userName) {
         this.userName.setValue(userName);
     }
 
     @Override
+    public String getUserName() {
+        return userName.getValue();
+    }
+
+    @Override
     public void setPassword(String password) {
         this.password.setValue(password);
+    }
+
+    @Override
+    public String getPassword() {
+        return password.getValue();
     }
 
     @Override
@@ -325,6 +419,12 @@ public class TargetsViewImpl extends Window implements TargetsView {
     @Override
     public void enableCancelButton(boolean enable) {
         cancelButton.setEnabled(enable);
+    }
+
+    @Override
+    public void selectTargetName() {
+        targetName.setFocus(true);
+        targetName.selectAll();
     }
 
 }

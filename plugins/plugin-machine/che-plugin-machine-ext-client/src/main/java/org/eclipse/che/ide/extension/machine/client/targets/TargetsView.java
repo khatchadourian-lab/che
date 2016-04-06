@@ -38,11 +38,19 @@ public interface TargetsView extends View<TargetsView.ActionDelegate> {
     void clear();
 
     /**
-     * Shows a list of available recipes.
+     * Shows a list of available targets.
      *
-     * @param recipes
+     * @param targets
      */
-    void showRecipes(List<RecipeDescriptor> recipes);
+    void showTargets(List<Target> targets);
+
+    /**
+     * Selects a target in the list,
+     *
+     * @param target
+     *         target to select
+     */
+    void selectTarget(Target target);
 
 
     void showHintPanel();
@@ -61,12 +69,28 @@ public interface TargetsView extends View<TargetsView.ActionDelegate> {
     void setTargetName(String targetName);
 
     /**
+     * Returns value of target name field.
+     *
+     * @return
+     *          target name field value
+     */
+    String getTargetName();
+
+    /**
      * Sets SSH host value.
      *
      * @param host
      *          host value
      */
     void setHost(String host);
+
+    /**
+     * Returns value of host field.
+     *
+     * @return
+     *          value of host field
+     */
+    String getHost();
 
     /**
      * Sets SSH port value.
@@ -77,6 +101,14 @@ public interface TargetsView extends View<TargetsView.ActionDelegate> {
     void setPort(String port);
 
     /**
+     * Returns value of port field.
+     *
+     * @return
+     *          value of port field
+     */
+    String getPort();
+
+    /**
      * Sets SSH user name.
      *
      * @param userName
@@ -85,12 +117,28 @@ public interface TargetsView extends View<TargetsView.ActionDelegate> {
     void setUserName(String userName);
 
     /**
+     * Returns value of user name field.
+     *
+     * @return
+     *         value of user name field
+     */
+    String getUserName();
+
+    /**
      * Sets SSH password.
      *
      * @param password
      *          password
      */
     void setPassword(String password);
+
+    /**
+     * Returns value of password field.
+     *
+     * @return
+     *          value of password field
+     */
+    String getPassword();
 
     /**
      * Enables or disables Save button.
@@ -108,6 +156,12 @@ public interface TargetsView extends View<TargetsView.ActionDelegate> {
      */
     void enableCancelButton(boolean enable);
 
+    /**
+     * Focuses and selects all the text in the Name field.
+     */
+    void selectTargetName();
+
+
 
     interface ActionDelegate {
 
@@ -117,8 +171,24 @@ public interface TargetsView extends View<TargetsView.ActionDelegate> {
         // Perform actions when clicking Add target button
         void onAddTarget(String category);
 
-        // Perform actions when selecting a recipe
-        void onRecipeSelected(RecipeDescriptor recipe);
+        // Perform actions when selecting a target
+        void onTargetSelected(Target target);
+
+        void onTargetNameChanged(String value);
+
+        void onHostChanged(String value);
+
+        void onPortChanged(String value);
+
+        void onUserNameChanged(String value);
+
+        void onPasswordChanged(String value);
+
+        void onSaveClicked();
+
+        void onCancelClicked();
+
+        void onConnectClicked();
 
     }
 
