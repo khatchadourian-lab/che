@@ -8,16 +8,8 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.api.machine.server.exception;
+package org.eclipse.che.plugin.machine.persistent;
 
-import org.eclipse.che.api.core.NotFoundException;
+public class PersistentMachineProcessTest {
 
-/**
- * @author gazarenkov
- */
-@SuppressWarnings("serial")
-public class UnsupportedRecipeException extends NotFoundException {
-    public UnsupportedRecipeException(String message) {
-        super(message);
-    }
 }

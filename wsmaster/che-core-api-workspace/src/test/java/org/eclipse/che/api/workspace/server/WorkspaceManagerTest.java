@@ -461,7 +461,7 @@ public class WorkspaceManagerTest {
                                                               .setDev(true)
                                                               .setName("dev-machine")
                                                               .setType("docker")
-                                                              .setSource(new MachineSourceImpl("location", "recipe"))
+                                                              .setSource(new MachineSourceImpl("location", "dockerfile"))
                                                               .setServers(asList(new ServerConfImpl("ref1",
                                                                                                     "8080",
                                                                                                     "https",
