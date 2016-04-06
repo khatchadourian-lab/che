@@ -557,7 +557,7 @@ export class CreateProjectCtrl {
       this.cleanupChannels(websocketStream, workspaceBus, bus, channel);
       this.getCreationSteps()[this.getCurrentProgressStep()].hasError = true;
       //if we have a SSH error
-      if (error.data.errorCode === 32068) {
+      if (error.data && error.data.errorCode === 32068) {
         this.showAddSecretKeyDialog(projectData.source.location, workspaceId);
         return;
       }

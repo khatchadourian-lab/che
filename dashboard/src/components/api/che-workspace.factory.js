@@ -289,7 +289,6 @@ export class CheWorkspace {
         wsagentServerAddress = server.address;
       }
     }
-    alert()
     let endpoint = runtimeData.devMachine.runtime.envVariables.CHE_API_ENDPOINT;
 
     var contextPath;

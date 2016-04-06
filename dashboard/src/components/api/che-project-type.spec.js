@@ -49,7 +49,7 @@ describe('CheProjectType', function(){
   /**
    * Inject factory and http backend
    */
-  beforeEach(inject(function(cheProjectType,cheWorkspace, cheAPIBuilder, cheHttpBackend) {
+  beforeEach(inject(function(cheProjectType, cheWorkspace, cheAPIBuilder, cheHttpBackend) {
     factory = cheProjectType;
     workspace = cheWorkspace;
     apiBuilder = cheAPIBuilder;
@@ -78,7 +78,10 @@ describe('CheProjectType', function(){
       let workspaceId = 'florentWorkspace';
       let agentUrl = 'localhost:3232';
 
-      cheBackend.addWorkspaceRuntime(workspaceId, {'links': [{'href': agentUrl, 'rel': 'wsagent'}]});
+      var runtime =  {'links': [{'href': agentUrl, 'rel': 'wsagent'}]};
+      var workspace1 = apiBuilder.getWorkspaceBuilder().withId(workspaceId).withRuntime(runtime).build();
+
+      cheBackend.addWorkspaces([workspace1]);
 
       // providing request
       // add workspaces on Http backend
@@ -88,8 +91,11 @@ describe('CheProjectType', function(){
       cheBackend.setup();
 
       //fetch runtime
-      workspace.fetchRuntimeConfig(workspaceId);
-      httpBackend.expectGET('/api/workspace/' + workspaceId + '/runtime');
+      workspace.fetchWorkspaceDetails(workspaceId);
+      httpBackend.expectGET('/api/workspace/' + workspaceId);
+
+      // flush command
+      httpBackend.flush();
 
       // no types now on factory
       expect(factory.getAllProjectTypes(workspaceId).length).toEqual(0);
@@ -98,7 +104,7 @@ describe('CheProjectType', function(){
       factory.fetchTypes(workspaceId);
 
       // expecting a GET
-      httpBackend.expectGET(agentUrl + '/api/ext/project-type/' + workspaceId);
+      httpBackend.expectGET('//' + agentUrl + '/api/ext/project-type/' + workspaceId);
 
       // flush command
       httpBackend.flush();
@@ -121,7 +127,6 @@ describe('CheProjectType', function(){
       var secondType = typesIds.get('ant');
       expect(secondType.id).toEqual(antType.id);
       expect(secondType.displayName).toEqual(antType.displayName);
-
 
     }
   );

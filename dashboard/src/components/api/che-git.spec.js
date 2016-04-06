@@ -81,6 +81,7 @@ describe('CheGit', function () {
 
       // setup backend
       cheBackend.setup();
+
       workspace.fetchWorkspaceDetails(workspaceId);
       httpBackend.expectGET('/api/workspace/' + workspaceId);
 
@@ -124,16 +125,18 @@ describe('CheGit', function () {
         'url': 'https://github.com/test3',
         'name': 'test2'
       }];
+      var runtime =  {'links': [{'href': agentUrl, 'rel': 'wsagent'}]};
+      var workspace1 = apiBuilder.getWorkspaceBuilder().withId(workspaceId).withRuntime(runtime).build();
+      cheBackend.addWorkspaces([workspace1]);
 
-      // providing request
-      cheBackend.addWorkspaceRuntime(workspaceId, {links: [{href: agentUrl, rel: 'wsagent'}]});
       // add test remote array with urls on Http backend
       cheBackend.addRemoteGitUrlArray(workspaceId, encodeURIComponent(projectPath), remoteArray);
 
       // setup backend
       cheBackend.setup();
-      workspace.fetchRuntimeConfig(workspaceId);
-      httpBackend.expectGET('/api/workspace/' + workspaceId + '/runtime');
+
+      workspace.fetchWorkspaceDetails(workspaceId);
+      httpBackend.expectGET('/api/workspace/' + workspaceId);
 
       // flush command
       httpBackend.flush();

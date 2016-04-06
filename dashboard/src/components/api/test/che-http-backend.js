@@ -34,7 +34,6 @@ export class CheHttpBackend {
     this.remoteSvnUrlsMap = new Map();
     this.projectTypesWorkspaces = new Map();
     this.workspaceAgentMap = new Map();
-    this.workspaceRuntimeMap = new Map();
 
     this.memberships = [];
 
@@ -56,6 +55,7 @@ export class CheHttpBackend {
     for (let key of workspaceKeys) {
       var tmpWorkspace = this.workspaces.get(key);
       workspaceReturn.push(tmpWorkspace);
+      this.addWorkspaceAgent(key, tmpWorkspace.runtime);
       this.httpBackend.when('GET', '/api/workspace/' + key).respond(tmpWorkspace);
     }
 
@@ -80,11 +80,6 @@ export class CheHttpBackend {
       this.httpBackend.when('GET', '/api/user/find?alias=' + key).respond(this.userEmailMap.get(key));
     }
 
-    var runtimeKeys = this.workspaceRuntimeMap.keys();
-    for (let key of runtimeKeys) {
-      this.httpBackend.when('GET', '/api/workspace/' + key + '/runtime').respond(this.workspaceRuntimeMap.get(key));
-    }
-
     this.httpBackend.when('GET', '/api/user/inrole?role=admin&scope=system&scopeId=').respond(false);
     this.httpBackend.when('GET', '/api/user/inrole?role=user&scope=system&scopeId=').respond(true);
 
@@ -100,7 +95,8 @@ export class CheHttpBackend {
     /// project details
     var projectDetailsKeys = this.projectDetailsMap.keys();
     for (let projectKey of projectDetailsKeys) {
-      this.httpBackend.when('GET', '/api/ext/project/' + projectKey).respond(this.projectDetailsMap.get(projectKey));
+      let workspaceKey = projectKey.split('/')[0];
+      this.httpBackend.when('GET', '//' + this.workspaceAgentMap.get(workspaceKey) + '/api/ext/project/' + projectKey).respond(this.projectDetailsMap.get(projectKey));
     }
 
     // permissions
@@ -175,7 +171,7 @@ export class CheHttpBackend {
     );
 
     // add call to the backend
-    this.httpBackend.when('GET', '/api/ext/project/' + workspace.id).respond(this.projectsPerWorkspace.get(workspace.id));
+    this.httpBackend.when('GET', '//' + this.workspaceAgentMap.get(workspace.id) + '/api/ext/project/' + workspace.id).respond(this.projectsPerWorkspace.get(workspace.id));
 
   }
 
@@ -193,10 +189,8 @@ export class CheHttpBackend {
    * @param workspaceId the workspaceId of the runt
    * @param runtime runtime to add
    */
-  addWorkspaceRuntime(workspaceId, runtime) {
-    this.workspaceRuntimeMap.set(workspaceId, runtime);
-
-    if (runtime.links) {
+  addWorkspaceAgent(workspaceId, runtime) {
+    if (runtime && runtime.links) {
       runtime.links.forEach((link) => {
         if (link.rel === 'wsagent') {
           this.workspaceAgentMap.set(workspaceId, link.href);
