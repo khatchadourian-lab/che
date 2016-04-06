@@ -70,10 +70,12 @@ import static org.eclipse.che.ide.workspace.perspectives.project.ProjectPerspect
 @Extension(title = "Machine", version = "1.0.0")
 public class MachineExtension {
 
-    public static final String GROUP_MACHINE_CONSOLE_TOOLBAR    = "MachineConsoleToolbar";
-    public static final String GROUP_MACHINE_TOOLBAR            = "MachineGroupToolbar";
-    public static final String GROUP_COMMANDS_LIST              = "CommandsListGroup";
-    public static final String GROUP_COMMANDS_LIST_DISPLAY_NAME = "Run";
+    public static final String GROUP_MACHINE_CONSOLE_TOOLBAR = "MachineConsoleToolbar";
+    public static final String GROUP_MACHINE_TOOLBAR         = "MachineGroupToolbar";
+    public static final String GROUP_COMMANDS_DROPDOWN       = "CommandsSelector";
+    public static final String GROUP_COMMANDS_LIST           = "CommandsListGroup";
+    public static final String GROUP_MACHINES_DROPDOWN       = "MachinesSelector";
+    public static final String GROUP_MACHINES_LIST           = "MachinesListGroup";
 
     @Inject
     public MachineExtension(MachineResources machineResources,
@@ -178,13 +180,18 @@ public class MachineExtension {
         final DefaultActionGroup rightToolbarGroup = (DefaultActionGroup)actionManager.getAction(GROUP_RIGHT_TOOLBAR);
         rightToolbarGroup.add(switchPerspectiveAction);
 
-        // add group for command list
-        final DefaultActionGroup commandList = new DefaultActionGroup(GROUP_COMMANDS_LIST_DISPLAY_NAME, true, actionManager);
+        // add group for list of machines
+        final DefaultActionGroup machinesList = new DefaultActionGroup(GROUP_MACHINES_DROPDOWN, true, actionManager);
+        actionManager.registerAction(GROUP_MACHINES_LIST, machinesList);
+        machinesList.add(editTargetsAction, FIRST);
 
+        // add group for list of commands
+        final DefaultActionGroup commandList = new DefaultActionGroup(GROUP_COMMANDS_DROPDOWN, true, actionManager);
         actionManager.registerAction(GROUP_COMMANDS_LIST, commandList);
         commandList.add(editCommandsAction, FIRST);
 
         final DefaultActionGroup runContextGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_RUN_CONTEXT_MENU);
+        runContextGroup.add(machinesList);
         runContextGroup.add(commandList);
         runContextGroup.addSeparator();
 
