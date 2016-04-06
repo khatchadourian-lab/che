@@ -13,6 +13,8 @@ package org.eclipse.che.plugin.machine.persistent.ssh.jsch;
 import com.jcraft.jsch.UserInfo;
 
 /**
+ * Implementation of {@link UserInfo}.
+ *
  * author Alexander Garagatyi
  */
 public class JschUserInfoImpl implements UserInfo {
@@ -36,14 +38,6 @@ public class JschUserInfoImpl implements UserInfo {
 
     public static JschUserInfoImplBuilder builder() {
         return new JschUserInfoImplBuilder();
-    }
-
-    public JschUserInfoImplBuilder toBuilder() {
-        return new JschUserInfoImplBuilder().setPassword(password)
-                                            .setPromptPassword(promptPassword)
-                                            .setPassphrase(passphrase)
-                                            .setPromptPassphrase(promptPassphrase)
-                                            .setPromptYesNo(promptYesNo);
     }
 
     @Override
@@ -87,27 +81,27 @@ public class JschUserInfoImpl implements UserInfo {
             return new JschUserInfoImpl(password, promptPassword, passphrase, promptPassphrase, promptYesNo);
         }
 
-        public JschUserInfoImplBuilder setPassword(String password) {
+        public JschUserInfoImplBuilder password(String password) {
             this.password = password;
             return this;
         }
 
-        public JschUserInfoImplBuilder setPassphrase(String passphrase) {
+        public JschUserInfoImplBuilder passphrase(String passphrase) {
             this.passphrase = passphrase;
             return this;
         }
 
-        public JschUserInfoImplBuilder setPromptPassword(boolean promptPassword) {
+        public JschUserInfoImplBuilder promptPassword(boolean promptPassword) {
             this.promptPassword = promptPassword;
             return this;
         }
 
-        public JschUserInfoImplBuilder setPromptPassphrase(boolean promptPassphrase) {
+        public JschUserInfoImplBuilder promptPassphrase(boolean promptPassphrase) {
             this.promptPassphrase = promptPassphrase;
             return this;
         }
 
-        public JschUserInfoImplBuilder setPromptYesNo(boolean promptYesNo) {
+        public JschUserInfoImplBuilder promptYesNo(boolean promptYesNo) {
             this.promptYesNo = promptYesNo;
             return this;
         }

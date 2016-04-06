@@ -76,13 +76,12 @@ public class PersistentMachineInstance extends AbstractInstance {
         // if runtime info is not evaluated yet
         if (machineRuntime == null) {
             machineRuntime = new MachineRuntimeInfoImpl(emptyMap(), emptyMap(), emptyMap());
-            // todo get env from ssh?
             // todo use servers from config
-            // todo check if ports are open?????
+            // todo get env from client
         }
         return machineRuntime;
     }
-
+// todo try to avoid map of processes
     @Override
     public InstanceProcess getProcess(final int pid) throws NotFoundException, MachineException {
         final InstanceProcess machineProcess = machineProcesses.get(pid);
@@ -101,6 +100,7 @@ public class PersistentMachineInstance extends AbstractInstance {
 
     @Override
     public List<InstanceProcess> getProcesses() throws MachineException {
+        // todo get children of session process
         Map<Integer, InstanceProcess> aliveProcesses = machineProcesses.values()
                                                                        .stream()
                                                                        .filter(InstanceProcess::isAlive)
@@ -130,7 +130,7 @@ public class PersistentMachineInstance extends AbstractInstance {
     @Override
     public void destroy() throws MachineException {
         // session destroying stops all processes
-        // todo kill all processes started by code
+        // todo kill all processes started by code, we should get parent pid of session and kill all children
         sshClient.closeSession();
     }
 

@@ -130,6 +130,7 @@ public class PersistentMachineProcess implements InstanceProcess {
             if (output != null) {
                 String line;
                 while ((line = reader.readLine()) != null) {
+                    // todo format output as it done in docker impl
                     // todo read error
                     //todo use async streams?
                     // todo how to manage disconnections due to network failures?

@@ -280,7 +280,7 @@ public class MachineManager {
         final InstanceProvider instanceProvider = machineInstanceProviders.getProvider(machineConfig.getType());
 
         if (!instanceProvider.getRecipeTypes().contains(machineConfig.getSource().getType().toLowerCase())) {
-            throw new UnsupportedRecipeException(format("Recipe type %s of %s machine implementation is unsupported",
+            throw new UnsupportedRecipeException(format("Recipe type %s of %s machine is unsupported",
                                                         machineConfig.getSource().getType(),
                                                         machineConfig.getName()));
         }

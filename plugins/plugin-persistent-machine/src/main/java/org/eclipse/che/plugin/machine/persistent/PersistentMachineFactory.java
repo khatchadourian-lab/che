@@ -20,6 +20,8 @@ import org.eclipse.che.api.machine.server.spi.Instance;
 import org.eclipse.che.plugin.machine.persistent.ssh.SshMachineRecipe;
 import org.eclipse.che.plugin.machine.persistent.ssh.jsch.SshClient;
 
+import java.util.Map;
+
 /**
  * Provides persistent machine implementation instances.
  *
@@ -32,8 +34,11 @@ public interface PersistentMachineFactory {
      *
      * @param sshMachineRecipe
      *         recipe of machine
+     * @param envVars
+     *         environment variables that should be injected into machine
      */
-    SshClient createSshClient(@Assisted SshMachineRecipe sshMachineRecipe);
+    SshClient createSshClient(@Assisted SshMachineRecipe sshMachineRecipe,
+                              @Assisted Map<String, String> envVars);
 
     /**
      * Creates persistent machine implementation of {@link Instance}.

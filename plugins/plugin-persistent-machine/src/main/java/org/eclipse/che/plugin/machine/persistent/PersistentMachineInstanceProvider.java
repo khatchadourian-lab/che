@@ -42,6 +42,9 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Alexander Garagatyi
  */
+// todo add backward compatibility for recipe type = 'Recipe' ~ 'dockerfile'
+// todo tests
+// todo changes in factories. (Anna sent links)
 public class PersistentMachineInstanceProvider implements InstanceProvider {
     private static final Gson GSON = new Gson();
 
@@ -78,7 +81,8 @@ public class PersistentMachineInstanceProvider implements InstanceProvider {
 
         SshMachineRecipe sshMachineRecipe = parseRecipe(recipe);
 
-        SshClient sshClient = persistentMachineFactory.createSshClient(sshMachineRecipe);
+        SshClient sshClient = persistentMachineFactory.createSshClient(sshMachineRecipe,
+                                                                       machine.getConfig().getEnvVariables());
         sshClient.openConnection();
 
         return persistentMachineFactory.createInstance(machine,

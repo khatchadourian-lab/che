@@ -13,26 +13,16 @@ package org.eclipse.che.plugin.machine.persistent.ssh;
 import java.util.Objects;
 
 /**
+ * Recipe of connection to persistent machine using ssh protocol.
+ *
  * author Alexander Garagatyi
  */
-/* describes recipe of ssh machine
-    {
-        "host" : "129.168.1.1",
-        "port" : 2222,
-        "authType" : "password",// todo pubkey, etc
-        "username" : "gaal",
-        "password" : "mypass"
-    }
-    */
 public class SshMachineRecipe {
 
-    private String host;
-
-    private Integer port;
-
-    private String username;
-
-    private String password;
+    private final String host;
+    private final Integer port;
+    private final String username;
+    private final String password;
 
     public SshMachineRecipe(String host,
                             Integer port,

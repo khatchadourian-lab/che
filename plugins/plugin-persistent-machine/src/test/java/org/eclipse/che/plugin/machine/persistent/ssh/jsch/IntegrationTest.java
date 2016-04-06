@@ -34,6 +34,7 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.testng.Assert.assertTrue;
 
@@ -80,8 +81,8 @@ public class IntegrationTest {
         }
 
         @Override
-        public SshClient createSshClient(@Assisted SshMachineRecipe sshMachineRecipe) {
-            return new SshClient(sshMachineRecipe, jSch, timeout);
+        public SshClient createSshClient(SshMachineRecipe sshMachineRecipe, Map<String, String> env) {
+            return new SshClient(sshMachineRecipe, env, jSch, timeout);
         }
 
         @Override
