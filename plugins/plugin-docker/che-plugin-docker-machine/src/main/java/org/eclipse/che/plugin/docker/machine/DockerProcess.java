@@ -20,6 +20,7 @@ import org.eclipse.che.api.core.util.ListLineConsumer;
 import org.eclipse.che.api.core.util.ValueHolder;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.spi.InstanceProcess;
+import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
 import org.eclipse.che.plugin.docker.client.Exec;
 import org.eclipse.che.plugin.docker.client.LogMessage;
@@ -56,7 +57,7 @@ public class DockerProcess implements InstanceProcess {
     public DockerProcess(DockerConnector docker,
                          @Assisted Command command,
                          @Assisted("container") String container,
-                         @Assisted("outputChannel") String outputChannel,
+                         @Nullable @Assisted("outputChannel") String outputChannel,
                          @Assisted("pid_file_path") String pidFilePath,
                          @Assisted int pid) {
         this.docker = docker;

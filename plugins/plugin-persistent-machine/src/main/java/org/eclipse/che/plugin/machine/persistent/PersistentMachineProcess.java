@@ -20,6 +20,7 @@ import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.api.core.util.LineConsumer;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.spi.InstanceProcess;
+import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.plugin.machine.persistent.ssh.jsch.SshClient;
 
 import javax.inject.Inject;
@@ -49,7 +50,7 @@ public class PersistentMachineProcess implements InstanceProcess {
 
     @Inject
     public PersistentMachineProcess(@Assisted Command command,
-                                    @Assisted("outputChannel") String outputChannel,
+                                    @Nullable @Assisted("outputChannel") String outputChannel,
                                     @Assisted int pid,
                                     @Assisted SshClient sshClient) {
         this.sshClient = sshClient;
