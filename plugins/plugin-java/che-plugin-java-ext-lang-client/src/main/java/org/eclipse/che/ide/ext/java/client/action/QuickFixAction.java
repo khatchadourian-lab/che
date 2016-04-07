@@ -24,19 +24,20 @@ import org.eclipse.che.ide.jseditor.client.codeassist.HasCompletionInformation;
 import org.eclipse.che.ide.jseditor.client.texteditor.EmbeddedTextEditorPresenter;
 
 /**
- * @author Evgen Vidolob
+ * Action to show Quick fix in editor.
+ *
+ * @author Igor Vinokur
  */
 @Singleton
 public class QuickFixAction extends JavaEditorAction {
 
     @Inject
-    public QuickFixAction(JavaLocalizationConstant constant,
+    public QuickFixAction(JavaLocalizationConstant locale,
                           EditorAgent editorAgent,
-                          JavaResources resources,
                           FileTypeRegistry fileTypeRegistry) {
-        super(constant.actionQuickdocTitle(),
-              constant.actionQuickdocDescription(),
-              resources.quickDocumentation(),
+        super(locale.actionQuickFixTitle(),
+              locale.actionQuickFixDescription(),
+              null,
               editorAgent,
               fileTypeRegistry);
     }
@@ -47,9 +48,8 @@ public class QuickFixAction extends JavaEditorAction {
         if(activeEditor == null){
             return;
         }
-        if(activeEditor instanceof EmbeddedTextEditorPresenter && activeEditor instanceof HasCompletionInformation) {
-            ((EmbeddedTextEditorPresenter)activeEditor).showCompletionProposals();
-
+        if(activeEditor instanceof EmbeddedTextEditorPresenter) {
+            ((EmbeddedTextEditorPresenter)activeEditor).showQuickAssist();
         }
     }
 }

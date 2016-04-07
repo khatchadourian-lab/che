@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.java.client;
 
+import elemental.events.KeyboardEvent;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -111,10 +113,10 @@ public class JavaExtension {
         actionManager.registerAction("javaFindUsages", findUsagesAction);
         actionManager.registerAction("javaClassStructure", fileStructureAction);
         actionManager.registerAction("organizeImports", organizeImportsAction);
-        actionManager.registerAction("hello", quickFixAction);
+        //actionManager.registerAction("quickFix", quickFixAction);
 
         assistantGroup.add(quickDocumentationAction, new Constraints(Anchor.BEFORE, GROUP_ASSISTANT_REFACTORING));
-        assistantGroup.add(quickFixAction, new Constraints(Anchor.BEFORE, GROUP_ASSISTANT_REFACTORING));
+        //assistantGroup.add(quickFixAction, new Constraints(Anchor.BEFORE, GROUP_ASSISTANT_REFACTORING));
         assistantGroup.add(openDeclarationAction, new Constraints(Anchor.BEFORE, GROUP_ASSISTANT_REFACTORING));
         assistantGroup.add(organizeImportsAction, new Constraints(Anchor.BEFORE, GROUP_ASSISTANT_REFACTORING));
         assistantGroup.add(openImplementationAction, new Constraints(Anchor.BEFORE, GROUP_ASSISTANT_REFACTORING));

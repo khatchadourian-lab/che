@@ -4,9 +4,9 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * <p/>
+ *
  * Contributors:
- * Codenvy, S.A. - initial API and implementation
+ *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
 package org.eclipse.che.ide.jseditor.client.texteditor;
 
@@ -40,10 +40,6 @@ import org.eclipse.che.ide.jseditor.client.events.doc.DocReadyWrapper.DocReadyIn
 import org.eclipse.che.ide.jseditor.client.keymap.KeyBindingAction;
 import org.eclipse.che.ide.jseditor.client.keymap.Keybinding;
 import org.eclipse.che.ide.jseditor.client.partition.DocumentPartitioner;
-import org.eclipse.che.ide.jseditor.client.position.PositionConverter;
-import org.eclipse.che.ide.jseditor.client.quickfix.QuickAssistAssistant;
-import org.eclipse.che.ide.jseditor.client.quickfix.QuickAssistProcessor;
-import org.eclipse.che.ide.jseditor.client.quickfix.QuickAssistantFactory;
 import org.eclipse.che.ide.jseditor.client.reconciler.Reconciler;
 import org.eclipse.che.ide.jseditor.client.text.TextPosition;
 import org.eclipse.che.ide.util.browser.UserAgent;
@@ -62,30 +58,20 @@ public class TextEditorInit<T extends EditorWidget> {
     private static final Logger LOG = Logger.getLogger(TextEditorInit.class.getName());
 
     private static final String CONTENT_ASSIST = "Content assist";
-    private static final String QUICK_FIX      = "Quick fix";
 
     private final TextEditorConfiguration        configuration;
     private final EventBus                       generalEventBus;
     private final CodeAssistantFactory           codeAssistantFactory;
-    private final QuickAssistantFactory          quickAssistantFactory;
     private final EmbeddedTextEditorPresenter<T> textEditor;
-
-
-    /**
-     * The quick assist assistant.
-     */
-    private QuickAssistAssistant quickAssist;
 
     public TextEditorInit(final TextEditorConfiguration configuration,
                           final EventBus generalEventBus,
                           final CodeAssistantFactory codeAssistantFactory,
-                          final QuickAssistantFactory quickAssistantFactory,
                           final EmbeddedTextEditorPresenter<T> textEditor) {
 
         this.configuration = configuration;
         this.generalEventBus = generalEventBus;
         this.codeAssistantFactory = codeAssistantFactory;
-        this.quickAssistantFactory = quickAssistantFactory;
         this.textEditor = textEditor;
     }
 
@@ -103,7 +89,6 @@ public class TextEditorInit<T extends EditorWidget> {
                 configureReconciler(documentHandle);
                 configureAnnotationModel(documentHandle);
                 configureCodeAssist(documentHandle);
-                configureQuickAssist(documentHandle);
                 configureChangeInterceptors(documentHandle);
             }
         };
@@ -146,7 +131,7 @@ public class TextEditorInit<T extends EditorWidget> {
             return;
         }
         // add the renderers (event handler) before the model (event source)
-        if (textEditor instanceof HasAnnotationRendering) {
+        if(textEditor instanceof HasAnnotationRendering){
             ((HasAnnotationRendering)textEditor).configure(annotationModel, documentHandle);
         }
         annotationModel.setDocumentHandle(documentHandle);
@@ -229,9 +214,9 @@ public class TextEditorInit<T extends EditorWidget> {
                 }
             };
             final HasKeybindings hasKeybindings = this.textEditor.getHasKeybindings();
-            if (UserAgent.isMac()) {
-                hasKeybindings.addKeybinding(new Keybinding(false, false, false, true, KeyCode.SPACE, action), CONTENT_ASSIST);
-                hasKeybindings.addKeybinding(new Keybinding(false, false, true, true, KeyCode.SPACE, action), CONTENT_ASSIST);
+            if(UserAgent.isMac()){
+                hasKeybindings.addKeybinding(new Keybinding(false,false,false, true, KeyCode.SPACE, action), CONTENT_ASSIST);
+                hasKeybindings.addKeybinding(new Keybinding(false,false,true, true, KeyCode.SPACE, action), CONTENT_ASSIST);
             } else {
                 hasKeybindings.addKeybinding(new Keybinding(true, false, false, false, KeyCode.SPACE, action), CONTENT_ASSIST);
             }
@@ -281,51 +266,6 @@ public class TextEditorInit<T extends EditorWidget> {
         this.textEditor.showCompletionProposals();
     }
 
-    /**
-     * Sets up the quick assist assistant.
-     * @param documentHandle the handle to the document
-     */
-    private void configureQuickAssist(final DocumentHandle documentHandle) {
-        final QuickAssistProcessor processor = configuration.getQuickAssistProcessor();
-        if (this.quickAssistantFactory != null && processor != null) {
-            this.quickAssist = quickAssistantFactory.createQuickAssistant(this.textEditor);
-            this.quickAssist.setQuickAssistProcessor(processor);
-//            documentHandle.getDocEventBus().addHandler(GutterClickEvent.TYPE, new GutterClickHandler() {
-//                @Override
-//                public void onGutterClick(final GutterClickEvent event) {
-//                    if (Gutters.ANNOTATION_GUTTER.equals(event.getGutterId())) {
-//                        final MouseEvent originalEvent = event.getEvent();
-//                        showQuickAssistant(event.getLineNumber(),
-//                                           originalEvent.getClientX(),
-//                                           originalEvent.getClientY());
-//                    }
-//                }
-//            });
-
-            //add a key binding
-            final KeyBindingAction action = new KeyBindingAction() {
-                @Override
-                public void action() {
-                    final PositionConverter positionConverter = textEditor.getPositionConverter();
-                    if (positionConverter != null) {
-                        final TextPosition cursor = textEditor.getCursorPosition();
-                        final int offset = textEditor.getCursorModel().getCursorPosition().getOffset();
-                        final PositionConverter.PixelCoordinates pixelPos = positionConverter.textToPixel(cursor);
-                        //TODO add to pixelPos.getY()  line height to assist widget doesn't cover current line
-                        showQuickAssistant(offset, pixelPos.getX(), pixelPos.getY());
-                    }
-                }
-            };
-            final HasKeybindings hasKeybindings = this.textEditor.getHasKeybindings();
-            hasKeybindings.addKeybinding(new Keybinding(false, false, true, false, KeyCode.ENTER, action), QUICK_FIX);
-//            hasKeybindings.addKeybinding(new Keybinding(true, false, false, false, KeyCode.ONE, action));
-        }
-    }
-
-    private void showQuickAssistant(final int offset, int clientX, int clientY) {
-        quickAssist.showPossibleQuickAssists(offset, clientX, clientY);
-    }
-
     private void configureChangeInterceptors(final DocumentHandle documentHandle) {
         final ChangeInterceptorProvider interceptors = configuration.getChangeInterceptorProvider();
         if (interceptors != null) {
@@ -351,14 +291,14 @@ public class TextEditorInit<T extends EditorWidget> {
                     }
                     // don't apply the interceptors if the range end doesn't belong to the same partition
                     final TextPosition to = change.getTo();
-                    if (to != null && !from.equals(to)) {
+                    if (to != null && ! from.equals(to)) {
                         final int endOffset = documentHandle.getDocument().getIndexFromPosition(to);
                         if (endOffset < region.getOffset() || endOffset > region.getOffset() + region.getLength()) {
                             return;
                         }
                     }
                     // stop as soon as one interceptors has modified the content
-                    for (final TextChangeInterceptor interceptor : filteredInterceptors) {
+                    for (final TextChangeInterceptor interceptor: filteredInterceptors) {
                         final TextChange result = interceptor.processChange(change,
                                                                             documentHandle.getDocument().getReadOnlyDocument());
                         if (result != null) {

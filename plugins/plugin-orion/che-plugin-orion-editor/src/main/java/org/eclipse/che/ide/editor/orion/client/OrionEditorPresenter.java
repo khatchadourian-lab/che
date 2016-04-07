@@ -19,6 +19,7 @@ import org.eclipse.che.ide.debug.BreakpointManager;
 import org.eclipse.che.ide.editor.orion.client.jso.OrionLinkedModelDataOverlay;
 import org.eclipse.che.ide.editor.orion.client.jso.OrionLinkedModelGroupOverlay;
 import org.eclipse.che.ide.editor.orion.client.jso.OrionLinkedModelOverlay;
+import org.eclipse.che.ide.ext.java.client.JavaLocalizationConstant;
 import org.eclipse.che.ide.jseditor.client.JsEditorConstants;
 import org.eclipse.che.ide.jseditor.client.annotation.AnnotationModel;
 import org.eclipse.che.ide.jseditor.client.annotation.AnnotationModelEvent;
@@ -65,6 +66,7 @@ public class OrionEditorPresenter extends EmbeddedTextEditorPresenter<OrionEdito
                                 final DialogFactory dialogFactory,
                                 final DocumentStorage documentStorage,
                                 final JsEditorConstants constant,
+                                final JavaLocalizationConstant locale,
                                 @Assisted final EditorWidgetFactory<OrionEditorWidget> editorWigetFactory,
                                 final EditorModule<OrionEditorWidget> editorModule,
                                 final EmbeddedTextEditorPartView editorView,
@@ -78,6 +80,7 @@ public class OrionEditorPresenter extends EmbeddedTextEditorPresenter<OrionEdito
               dialogFactory,
               documentStorage,
               constant,
+              locale,
               editorWigetFactory,
               editorModule,
               editorView,

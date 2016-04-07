@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.che.ide.jseditor.client.texteditor;
 
+import elemental.events.KeyboardEvent;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -44,6 +46,7 @@ import org.eclipse.che.ide.api.texteditor.UndoableEditor;
 import org.eclipse.che.ide.debug.BreakpointManager;
 import org.eclipse.che.ide.debug.BreakpointRenderer;
 import org.eclipse.che.ide.debug.HasBreakpointRenderer;
+import org.eclipse.che.ide.ext.java.client.JavaLocalizationConstant;
 import org.eclipse.che.ide.hotkeys.HasHotKeyItems;
 import org.eclipse.che.ide.hotkeys.HotKeyItem;
 import org.eclipse.che.ide.jseditor.client.JsEditorConstants;
@@ -67,6 +70,8 @@ import org.eclipse.che.ide.jseditor.client.gutter.HasGutter;
 import org.eclipse.che.ide.jseditor.client.keymap.KeyBindingAction;
 import org.eclipse.che.ide.jseditor.client.keymap.Keybinding;
 import org.eclipse.che.ide.jseditor.client.position.PositionConverter;
+import org.eclipse.che.ide.jseditor.client.quickfix.QuickAssistAssistant;
+import org.eclipse.che.ide.jseditor.client.quickfix.QuickAssistProcessor;
 import org.eclipse.che.ide.jseditor.client.quickfix.QuickAssistantFactory;
 import org.eclipse.che.ide.jseditor.client.reconciler.Reconciler;
 import org.eclipse.che.ide.jseditor.client.reconciler.ReconcilerWithAutoSave;
@@ -81,6 +86,8 @@ import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 import org.eclipse.che.ide.ui.loaders.request.LoaderFactory;
 import org.vectomatic.dom.svg.ui.SVGResource;
+
+import elemental.events.KeyboardEvent.KeyCode;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -109,10 +116,11 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
 
     private static final String TOGGLE_LINE_BREAKPOINT = "Toggle line breakpoint";
 
-    private final WorkspaceAgent         workspaceAgent;
-    private final EditorWidgetFactory<T> editorWidgetFactory;
-    private final EditorModule<T>        editorModule;
-    private final JsEditorConstants      constant;
+    private final WorkspaceAgent           workspaceAgent;
+    private final JavaLocalizationConstant locale;
+    private final EditorWidgetFactory<T>   editorWidgetFactory;
+    private final EditorModule<T>          editorModule;
+    private final JsEditorConstants        constant;
 
     private final DocumentStorage            documentStorage;
     private final EventBus                   generalEventBus;
@@ -130,6 +138,7 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
     private EditorWidget             editorWidget;
     private Document                 document;
     private CursorModelWithHandler   cursorModel;
+    private QuickAssistAssistant     quickAssistant;
     private HasKeybindings keyBindingsManager = new TemporaryKeybindingsManager();
     private LoaderFactory       loaderFactory;
     private NotificationManager notificationManager;
@@ -150,6 +159,7 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
                                        final DialogFactory dialogFactory,
                                        final DocumentStorage documentStorage,
                                        final JsEditorConstants constant,
+                                       final JavaLocalizationConstant locale,
                                        @Assisted final EditorWidgetFactory<T> editorWidgetFactory,
                                        final EditorModule<T> editorModule,
                                        final EmbeddedTextEditorPartView editorView,
@@ -171,6 +181,7 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
         this.generalEventBus = eventBus;
         this.quickAssistantFactory = quickAssistantFactory;
         this.workspaceAgent = workspaceAgent;
+        this.locale = locale;
 
         this.editorView.setDelegate(this);
         eventBus.addHandler(FileEvent.TYPE, this);
@@ -181,7 +192,6 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
         new TextEditorInit<T>(configuration,
                               generalEventBus,
                               this.codeAssistantFactory,
-                              this.quickAssistantFactory,
                               this).init();
 
         if (editorModule.isError()) {
@@ -210,6 +220,40 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
         documentStorage.getDocument(input.getFile(), dualCallback);
         if (!moduleReady) {
             editorModule.waitReady(dualCallback);
+        }
+
+        QuickAssistProcessor processor = configuration.getQuickAssistProcessor();
+        if (quickAssistantFactory != null && processor != null) {
+            quickAssistant = quickAssistantFactory.createQuickAssistant(this);
+            quickAssistant.setQuickAssistProcessor(processor);
+
+            final KeyBindingAction action = new KeyBindingAction() {
+                @Override
+                public void action() {
+                    showQuickAssist();
+                }
+            };
+            final HasKeybindings hasKeybindings = keyBindingsManager;
+            hasKeybindings.addKeybinding(new Keybinding(false, false, true, false, KeyCode.ENTER, action),
+                                         "Quick fix");
+        }
+
+    }
+
+    /**
+     * Show the quick assist assistant.
+     */
+    public void showQuickAssist() {
+        if (quickAssistant == null) {
+            return;
+        }
+        PositionConverter positionConverter = getPositionConverter();
+        if (positionConverter != null) {
+            TextPosition cursor = getCursorPosition();
+            PositionConverter.PixelCoordinates pixelPos = positionConverter.textToPixel(cursor);
+            quickAssistant.showPossibleQuickAssists(getCursorModel().getCursorPosition().getOffset(),
+                                                    pixelPos.getX(),
+                                                    pixelPos.getY());
         }
     }
 
