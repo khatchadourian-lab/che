@@ -12,6 +12,10 @@ package org.eclipse.che.plugin.docker.client.params;
 
 import org.eclipse.che.plugin.docker.client.MessageProcessor;
 
+import javax.validation.constraints.NotNull;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#attachContainer(AttachContainerParams, MessageProcessor)} .
  *
@@ -23,19 +27,33 @@ public class AttachContainerParams {
     private Boolean stream;
 
     /**
+     * Creates arguments holder with required parameters.
+     *
+     * @param container
+     *         info about this parameter @see {@link #withContainer(String)}
+     * @return attach container arguments holder with required parameters
+     */
+    public static AttachContainerParams from(@NotNull String container) {
+        return new AttachContainerParams().withContainer(container);
+    }
+
+    private AttachContainerParams() {}
+
+    /**
      * @param container
      *         id or name of container
      */
-    public AttachContainerParams withContainer(String container) {
+    public AttachContainerParams withContainer(@NotNull String container) {
+        requireNonNull(container);
         this.container = container;
         return this;
     }
 
     /**
      * @param stream
-     *         if {@code true} gets stream from container.
-     *         Note, that live stream blocks until container is running.
-     *         When using the TTY setting is enabled when create container, the stream is the raw data
+     *         if {@code true} gets output stream from container.<br/>
+     *         Note, that live stream blocks until container is running.<br/>
+     *         When using the TTY setting is enabled when from container, the stream is the raw data
      *          from the process PTY and client’s stdin.
      *         When the TTY is disabled, then the stream is multiplexed to separate stdout and stderr.
      */
@@ -44,11 +62,11 @@ public class AttachContainerParams {
         return this;
     }
 
-    public String getContainer() {
+    public String container() {
         return container;
     }
 
-    public Boolean isStream() {
+    public Boolean stream() {
         return stream;
     }
 }

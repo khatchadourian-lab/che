@@ -12,6 +12,10 @@ package org.eclipse.che.plugin.docker.client.params;
 
 import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 
+import javax.validation.constraints.NotNull;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#push(PushParams, ProgressMonitor)}.
  *
@@ -24,10 +28,24 @@ public class PushParams {
     private String registry;
 
     /**
+     * Creates arguments holder with required parameters.
+     *
+     * @param repository
+     *         info about this parameter @see {@link #withRepository(String)}
+     * @return push arguments holder with required parameters
+     */
+    public static PushParams from(@NotNull String repository) {
+        return new PushParams().withRepository(repository);
+    }
+
+    private PushParams() {}
+
+    /**
      * @param repository
      *         repository name
      */
-    public PushParams withRepository(String repository) {
+    public PushParams withRepository(@NotNull String repository) {
+        requireNonNull(repository);
         this.repository = repository;
         return this;
     }
@@ -50,15 +68,15 @@ public class PushParams {
         return this;
     }
 
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
-    public String getTag() {
+    public String tag() {
         return tag;
     }
 
-    public String getRegistry() {
+    public String registry() {
         return registry;
     }
 

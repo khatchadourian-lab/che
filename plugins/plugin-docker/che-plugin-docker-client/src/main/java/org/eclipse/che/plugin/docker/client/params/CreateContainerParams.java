@@ -12,6 +12,10 @@ package org.eclipse.che.plugin.docker.client.params;
 
 import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
 
+import javax.validation.constraints.NotNull;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#createContainer(CreateContainerParams)}.
  *
@@ -23,10 +27,24 @@ public class CreateContainerParams {
     private String          containerName;
 
     /**
+     * Creates arguments holder with required parameters.
+     *
+     * @param containerConfig
+     *         info about this parameter @see {@link #withContainerConfig(ContainerConfig)}
+     * @return create container arguments holder with required parameters
+     */
+    public static CreateContainerParams from(@NotNull ContainerConfig containerConfig) {
+        return new CreateContainerParams().withContainerConfig(containerConfig);
+    }
+
+    private CreateContainerParams() {}
+
+    /**
      * @param containerConfig
      *         configuration of future container
      */
-    public CreateContainerParams withContainerConfig(ContainerConfig containerConfig) {
+    public CreateContainerParams withContainerConfig(@NotNull ContainerConfig containerConfig) {
+        requireNonNull(containerConfig);
         this.containerConfig = containerConfig;
         return this;
     }
@@ -40,11 +58,11 @@ public class CreateContainerParams {
         return this;
     }
 
-    public ContainerConfig getContainerConfig() {
+    public ContainerConfig containerConfig() {
         return containerConfig;
     }
 
-    public String getContainerName() {
+    public String containerName() {
         return containerName;
     }
 

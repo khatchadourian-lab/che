@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import javax.validation.constraints.NotNull;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#createExec(CreateExecParams)}.
  *
@@ -22,10 +26,27 @@ public class CreateExecParams {
     private String[] cmd;
 
     /**
+     * Creates arguments holder with required parameters.
+     *
+     * @param container
+     *         info about this parameter @see {@link #withContainer(String)}
+     * @param cmd
+     *         info about this parameter @see {@link #withCmd(String[])}
+     * @return create exec arguments holder with required parameters
+     */
+    public static CreateExecParams from(@NotNull String container, @NotNull String[] cmd) {
+        return new CreateExecParams().withContainer(container)
+                                     .withCmd(cmd);
+    }
+
+    private CreateExecParams() {}
+
+    /**
      * @param container
      *         id or name of container
      */
-    public CreateExecParams withContainer(String container) {
+    public CreateExecParams withContainer(@NotNull String container) {
+        requireNonNull(container);
         this.container = container;
         return this;
     }
@@ -43,20 +64,21 @@ public class CreateExecParams {
      * @param cmd
      *         command to run specified as a string or an array of strings
      */
-    public CreateExecParams withCmd(String[] cmd) {
+    public CreateExecParams withCmd(@NotNull String[] cmd) {
+        requireNonNull(cmd);
         this.cmd = cmd;
         return this;
     }
 
-    public String getContainer() {
+    public String container() {
         return container;
     }
 
-    public Boolean isDetach() {
+    public Boolean detach() {
         return detach;
     }
 
-    public String[] getCmd() {
+    public String[] cmd() {
         return cmd;
     }
 

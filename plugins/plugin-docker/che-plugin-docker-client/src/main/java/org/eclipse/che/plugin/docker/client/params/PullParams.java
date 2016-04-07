@@ -43,7 +43,8 @@ public class PullParams {
 
     /**
      * @param registry
-     *         host and port of registry, e.g. localhost:5000
+     *         host and port of registry, e.g. localhost:5000.
+     *         If it is not set, default value "hub.docker.com" will be used
      */
     public PullParams withRegistry(String registry) {
         this.registry = registry;

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import javax.validation.constraints.NotNull;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#commit(CommitParams)}.
  *
@@ -24,10 +28,27 @@ public class CommitParams {
     private String author;
 
     /**
+     * Creates arguments holder with required parameters.
+     *
+     * @param container
+     *         info about this parameter @see {@link #withContainer(String)}
+     * @param repository
+     *         info about this parameter @see {@link #withRepository(String)}
+     * @return push arguments holder with required parameters
+     */
+    public static CommitParams from(@NotNull String container, @NotNull String repository) {
+        return new CommitParams().withContainer(container)
+                                 .withRepository(repository);
+    }
+
+    private CommitParams() {}
+
+    /**
      * @param container
      *         id or name of container
      */
-    public CommitParams withContainer(String container) {
+    public CommitParams withContainer(@NotNull String container) {
+        requireNonNull(container);
         this.container = container;
         return this;
     }
@@ -36,7 +57,8 @@ public class CommitParams {
      * @param repository
      *         full repository name
      */
-    public CommitParams withRepository(String repository) {
+    public CommitParams withRepository(@NotNull String repository) {
+        requireNonNull(repository);
         this.repository = repository;
         return this;
     }
@@ -68,23 +90,23 @@ public class CommitParams {
         return this;
     }
 
-    public String getContainer() {
+    public String container() {
         return container;
     }
 
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
-    public String getTag() {
+    public String tag() {
         return tag;
     }
 
-    public String getComment() {
+    public String comment() {
         return comment;
     }
 
-    public String getAuthor() {
+    public String author() {
         return author;
     }
 

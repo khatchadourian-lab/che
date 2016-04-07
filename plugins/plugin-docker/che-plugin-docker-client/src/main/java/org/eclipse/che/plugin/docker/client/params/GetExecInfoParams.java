@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.docker.client.params;
 
+import javax.validation.constraints.NotNull;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#getExecInfo(GetExecInfoParams)}.
  *
@@ -17,19 +21,33 @@ package org.eclipse.che.plugin.docker.client.params;
  */
 public class GetExecInfoParams {
 
-    private String id;
+    private String execId;
+
+    /**
+     * Creates arguments holder with required parameters.
+     *
+     * @param execId
+     *         info about this parameter @see {@link #withExecId(String)}
+     * @return get exec info arguments holder with required parameters
+     */
+    public static GetExecInfoParams from(@NotNull String execId) {
+        return new GetExecInfoParams().withExecId(execId);
+    }
+
+    private GetExecInfoParams() {}
 
     /**
      * @param execId
      *         exec id
      */
-    public GetExecInfoParams withExecId(String execId) {
-        id = execId;
+    public GetExecInfoParams withExecId(@NotNull String execId) {
+        requireNonNull(execId);
+        this.execId = execId;
         return this;
     }
 
-    public String getExecId() {
-        return id;
+    public String execId() {
+        return execId;
     }
 
 }

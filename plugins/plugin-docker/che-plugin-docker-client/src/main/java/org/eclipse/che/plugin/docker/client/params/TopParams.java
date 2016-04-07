@@ -34,7 +34,9 @@ public class TopParams {
      *         ps arguments to use
      */
     public TopParams withPsArgs(String... psArgs) {
-        this.psArgs = psArgs;
+        if (psArgs.length > 0) {
+            this.psArgs = psArgs;
+        }
         return this;
     }
 

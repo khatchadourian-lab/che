@@ -25,6 +25,15 @@ public class GetEventsParams {
     private Filters filters;
 
     /**
+     * Creates get events arguments holder.
+     */
+    public static GetEventsParams create() {
+        return new GetEventsParams();
+    }
+
+    private GetEventsParams() {}
+
+    /**
      * @param sinceSecond
      *         UNIX date in seconds. Allow omit events created before specified date
      */
@@ -52,15 +61,15 @@ public class GetEventsParams {
         return this;
     }
 
-    public Long getSinceSecond() {
+    public Long sinceSecond() {
         return sinceSecond;
     }
 
-    public Long getUntilSecond() {
+    public Long untilSecond() {
         return untilSecond;
     }
 
-    public Filters getFilters() {
+    public Filters filters() {
         return filters;
     }
 

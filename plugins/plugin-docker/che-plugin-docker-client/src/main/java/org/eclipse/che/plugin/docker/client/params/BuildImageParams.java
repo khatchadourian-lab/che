@@ -13,10 +13,13 @@ package org.eclipse.che.plugin.docker.client.params;
 import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.dto.AuthConfigs;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Arguments holder for {@link org.eclipse.che.plugin.docker.client.DockerConnector#buildImage(BuildImageParams, ProgressMonitor)}.
@@ -33,6 +36,19 @@ public class BuildImageParams {
     private List<File>  files;
 
     /**
+     * Creates arguments holder with required parameters.
+     *
+     * @param files
+     *         info about this parameter @see {@link #withFiles(File...)}
+     * @return build image arguments holder with required parameters
+     */
+    public static BuildImageParams from(@NotNull File... files) {
+        return new BuildImageParams().withFiles(files);
+    }
+
+    private BuildImageParams() {}
+
+    /**
      * @param repository
      *         full repository name to be applied to newly created image
      */
@@ -43,7 +59,7 @@ public class BuildImageParams {
 
     /**
      * @param authConfigs
-     *         authentication configuration for registries. Can be null
+     *         authentication configuration for registries
      */
     public BuildImageParams withAuthConfigs(AuthConfigs authConfigs) {
         this.authConfigs = authConfigs;
@@ -84,7 +100,8 @@ public class BuildImageParams {
      *         files that are needed for creation docker images (e.g. file of directories used in ADD instruction in Dockerfile).
      *         One of them must be Dockerfile.
      */
-    public BuildImageParams withFiles(File... files) {
+    public BuildImageParams withFiles(@NotNull File... files) {
+        requireNonNull(files);
         this.files = Arrays.asList(files);
         return this;
     }
@@ -96,40 +113,33 @@ public class BuildImageParams {
      * @param files
      *         files to add to image
      */
-    public BuildImageParams addFiles(File... files) {
+    public BuildImageParams addFiles(@NotNull File... files) {
+        requireNonNull(files);
         this.files.addAll(Arrays.asList(files));
         return this;
     }
 
-    /**
-     * The same as {@link #addFiles(File...)}, but for single file.
-     */
-    public BuildImageParams addFile(File file) {
-        this.files.add(file);
-        return this;
-    }
-
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
-    public AuthConfigs getAuthConfigs() {
+    public AuthConfigs authConfigs() {
         return authConfigs;
     }
 
-    public Boolean isDoForcePull() {
+    public Boolean doForcePull() {
         return doForcePull;
     }
 
-    public Long getMemoryLimit() {
+    public Long memoryLimit() {
         return memoryLimit;
     }
 
-    public Long getMemorySwapLimit() {
+    public Long memorySwapLimit() {
         return memorySwapLimit;
     }
 
-    public List<File> getFiles() {
+    public List<File> files() {
         return files;
     }
 
