@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.che.ide.jseditor.client.texteditor;
 
-import elemental.events.KeyboardEvent;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -46,7 +44,6 @@ import org.eclipse.che.ide.api.texteditor.UndoableEditor;
 import org.eclipse.che.ide.debug.BreakpointManager;
 import org.eclipse.che.ide.debug.BreakpointRenderer;
 import org.eclipse.che.ide.debug.HasBreakpointRenderer;
-import org.eclipse.che.ide.ext.java.client.JavaLocalizationConstant;
 import org.eclipse.che.ide.hotkeys.HasHotKeyItems;
 import org.eclipse.che.ide.hotkeys.HotKeyItem;
 import org.eclipse.che.ide.jseditor.client.JsEditorConstants;
@@ -87,8 +84,6 @@ import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 import org.eclipse.che.ide.ui.loaders.request.LoaderFactory;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import elemental.events.KeyboardEvent.KeyCode;
-
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -117,7 +112,6 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
     private static final String TOGGLE_LINE_BREAKPOINT = "Toggle line breakpoint";
 
     private final WorkspaceAgent           workspaceAgent;
-    private final JavaLocalizationConstant locale;
     private final EditorWidgetFactory<T>   editorWidgetFactory;
     private final EditorModule<T>          editorModule;
     private final JsEditorConstants        constant;
@@ -159,7 +153,6 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
                                        final DialogFactory dialogFactory,
                                        final DocumentStorage documentStorage,
                                        final JsEditorConstants constant,
-                                       final JavaLocalizationConstant locale,
                                        @Assisted final EditorWidgetFactory<T> editorWidgetFactory,
                                        final EditorModule<T> editorModule,
                                        final EmbeddedTextEditorPartView editorView,
@@ -181,7 +174,6 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
         this.generalEventBus = eventBus;
         this.quickAssistantFactory = quickAssistantFactory;
         this.workspaceAgent = workspaceAgent;
-        this.locale = locale;
 
         this.editorView.setDelegate(this);
         eventBus.addHandler(FileEvent.TYPE, this);
@@ -189,9 +181,15 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
 
     @Override
     protected void initializeEditor(final OpenEditorCallback callback) {
+        QuickAssistProcessor processor = configuration.getQuickAssistProcessor();
+        if (quickAssistantFactory != null && processor != null) {
+            quickAssistant = quickAssistantFactory.createQuickAssistant(this);
+            quickAssistant.setQuickAssistProcessor(processor);
+        }
         new TextEditorInit<T>(configuration,
                               generalEventBus,
                               this.codeAssistantFactory,
+                              this.quickAssistant,
                               this).init();
 
         if (editorModule.isError()) {
@@ -221,23 +219,6 @@ public class EmbeddedTextEditorPresenter<T extends EditorWidget> extends Abstrac
         if (!moduleReady) {
             editorModule.waitReady(dualCallback);
         }
-
-        QuickAssistProcessor processor = configuration.getQuickAssistProcessor();
-        if (quickAssistantFactory != null && processor != null) {
-            quickAssistant = quickAssistantFactory.createQuickAssistant(this);
-            quickAssistant.setQuickAssistProcessor(processor);
-
-            final KeyBindingAction action = new KeyBindingAction() {
-                @Override
-                public void action() {
-                    showQuickAssist();
-                }
-            };
-            final HasKeybindings hasKeybindings = keyBindingsManager;
-            hasKeybindings.addKeybinding(new Keybinding(false, false, true, false, KeyCode.ENTER, action),
-                                         "Quick fix");
-        }
-
     }
 
     /**

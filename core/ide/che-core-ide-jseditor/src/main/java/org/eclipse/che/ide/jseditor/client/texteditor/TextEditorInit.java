@@ -40,6 +40,8 @@ import org.eclipse.che.ide.jseditor.client.events.doc.DocReadyWrapper.DocReadyIn
 import org.eclipse.che.ide.jseditor.client.keymap.KeyBindingAction;
 import org.eclipse.che.ide.jseditor.client.keymap.Keybinding;
 import org.eclipse.che.ide.jseditor.client.partition.DocumentPartitioner;
+import org.eclipse.che.ide.jseditor.client.position.PositionConverter;
+import org.eclipse.che.ide.jseditor.client.quickfix.QuickAssistAssistant;
 import org.eclipse.che.ide.jseditor.client.reconciler.Reconciler;
 import org.eclipse.che.ide.jseditor.client.text.TextPosition;
 import org.eclipse.che.ide.util.browser.UserAgent;
@@ -58,20 +60,28 @@ public class TextEditorInit<T extends EditorWidget> {
     private static final Logger LOG = Logger.getLogger(TextEditorInit.class.getName());
 
     private static final String CONTENT_ASSIST = "Content assist";
+    private static final String QUICK_FIX      = "Quick fix";
 
     private final TextEditorConfiguration        configuration;
     private final EventBus                       generalEventBus;
     private final CodeAssistantFactory           codeAssistantFactory;
     private final EmbeddedTextEditorPresenter<T> textEditor;
+    private final QuickAssistAssistant           quickAssist;
 
+
+    /**
+     * The quick assist assistant.
+     */
     public TextEditorInit(final TextEditorConfiguration configuration,
                           final EventBus generalEventBus,
                           final CodeAssistantFactory codeAssistantFactory,
+                          final QuickAssistAssistant quickAssist,
                           final EmbeddedTextEditorPresenter<T> textEditor) {
 
         this.configuration = configuration;
         this.generalEventBus = generalEventBus;
         this.codeAssistantFactory = codeAssistantFactory;
+        this.quickAssist = quickAssist;
         this.textEditor = textEditor;
     }
 
@@ -90,6 +100,7 @@ public class TextEditorInit<T extends EditorWidget> {
                 configureAnnotationModel(documentHandle);
                 configureCodeAssist(documentHandle);
                 configureChangeInterceptors(documentHandle);
+                addQuickAssistKeyBinding();
             }
         };
         new DocReadyWrapper<TextEditorInit<T>>(generalEventBus, this.textEditor.getEditorHandle(), init, this);
@@ -264,6 +275,25 @@ public class TextEditorInit<T extends EditorWidget> {
     /** Show the available completions. */
     private void showCompletion() {
         this.textEditor.showCompletionProposals();
+    }
+
+    /**
+     * Add key binding to quick assist assistant.
+     */
+    private void addQuickAssistKeyBinding() {
+        if (this.quickAssist != null) {
+            final KeyBindingAction action = new KeyBindingAction() {
+                @Override
+                public void action() {
+                    final PositionConverter positionConverter = textEditor.getPositionConverter();
+                    if (positionConverter != null) {
+                        textEditor.showQuickAssist();
+                    }
+                }
+            };
+            final HasKeybindings hasKeybindings = this.textEditor.getHasKeybindings();
+            hasKeybindings.addKeybinding(new Keybinding(false, false, true, false, KeyCode.ENTER, action), QUICK_FIX);
+        }
     }
 
     private void configureChangeInterceptors(final DocumentHandle documentHandle) {
