@@ -31,6 +31,7 @@ import org.eclipse.che.ide.api.project.node.Node;
 import org.eclipse.che.ide.api.selection.Selection;
 import org.eclipse.che.ide.project.node.ProjectNode;
 import org.eclipse.che.ide.api.app.StartUpAction;
+import org.eclipse.che.ide.util.loging.Log;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -183,14 +184,14 @@ public class AppContextImpl implements AppContext, SelectionChangedHandler, WsAg
 
         if (selection == null) {
             currentProject = null;
-            browserQueryFieldRenderer.setProjectName("");
+            browserQueryFieldRenderer.setQueryField("", workspace.getConfig().getName());
             return;
         }
 
         final Object headElement = selection.getHeadElement();
         if (headElement == null) {
             currentProject = null;
-            browserQueryFieldRenderer.setProjectName("");
+            browserQueryFieldRenderer.setQueryField("", workspace.getConfig().getName());
             return;
         }
 
@@ -208,7 +209,7 @@ public class AppContextImpl implements AppContext, SelectionChangedHandler, WsAg
                 rootConfig = currentProject.getProjectConfig();
             }
             currentProject.setRootProject(rootConfig);
-            browserQueryFieldRenderer.setProjectName(rootConfig.getName());
+            browserQueryFieldRenderer.setQueryField(rootConfig.getName(), workspace.getConfig().getName());
         }
         eventBus.fireEvent(new CurrentProjectChangedEvent(currentProject.getProjectConfig()));
     }
@@ -220,7 +221,7 @@ public class AppContextImpl implements AppContext, SelectionChangedHandler, WsAg
     @Override
     public void onWsAgentStopped(WsAgentStateEvent event) {
         currentProject = null;
-        browserQueryFieldRenderer.setProjectName("");
+        browserQueryFieldRenderer.setQueryField("", "");
     }
 
     @Override
@@ -235,7 +236,7 @@ public class AppContextImpl implements AppContext, SelectionChangedHandler, WsAg
 
         if (updatedProjectDescriptorPath.equals(currentProject.getRootProject().getPath())) {
             currentProject.setRootProject(updatedProjectDescriptor);
-            browserQueryFieldRenderer.setProjectName(updatedProjectDescriptor.getName());
+            browserQueryFieldRenderer.setQueryField(updatedProjectDescriptor.getName(), workspace.getConfig().getName());
         }
     }
 }
