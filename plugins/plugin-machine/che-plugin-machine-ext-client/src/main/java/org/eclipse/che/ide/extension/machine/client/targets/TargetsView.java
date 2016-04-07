@@ -157,6 +157,12 @@ public interface TargetsView extends View<TargetsView.ActionDelegate> {
     void enableCancelButton(boolean enable);
 
     /**
+     * Enables or disables Connect button.
+     * @param enable
+     */
+    void enableConnectButton(boolean enable);
+
+    /**
      * Focuses and selects all the text in the Name field.
      */
     void selectTargetName();
@@ -170,6 +176,8 @@ public interface TargetsView extends View<TargetsView.ActionDelegate> {
 
         // Perform actions when clicking Add target button
         void onAddTarget(String category);
+
+        void onDeleteTarget(Target target);
 
         // Perform actions when selecting a target
         void onTargetSelected(Target target);

@@ -206,6 +206,27 @@ public interface MachineLocalizationConstant extends Messages {
     @Key("view.targets.newTarget.hint")
     String targetsViewNewTargetHint();
 
+    @Key("view.targets.save.success")
+    String targetsViewSaveSuccess();
+
+    @Key("view.targets.save.error")
+    String targetsViewSaveError();
+
+    @Key("view.targets.connect.success")
+    String targetsViewConnectSuccess(String target);
+
+    @Key("view.targets.connect.error")
+    String targetsViewConnectError(String target);
+
+    @Key("view.targets.delete.confirm")
+    String targetsViewDeleteConfirm(String target);
+
+    @Key("view.targets.delete.success")
+    String targetsViewDeleteSuccess(String target);
+
+    @Key("view.targets.delete.error")
+    String targetsViewDeleteError(String target);
+
 
     @Key("process.active")
     String processActive();

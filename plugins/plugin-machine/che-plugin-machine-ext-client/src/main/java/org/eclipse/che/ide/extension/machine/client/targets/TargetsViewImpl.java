@@ -14,16 +14,12 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Event;
@@ -36,7 +32,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import elemental.events.KeyboardEvent;
-import org.eclipse.che.api.machine.shared.dto.recipe.RecipeDescriptor;
 import org.eclipse.che.ide.CoreLocalizationConstant;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
@@ -46,8 +41,6 @@ import org.eclipse.che.ide.ui.list.CategoriesList;
 import org.eclipse.che.ide.ui.list.Category;
 import org.eclipse.che.ide.ui.list.CategoryRenderer;
 import org.eclipse.che.ide.ui.window.Window;
-import org.eclipse.che.ide.util.StringUtils;
-import org.vectomatic.dom.svg.ui.SVGImage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -336,10 +329,32 @@ public class TargetsViewImpl extends Window implements TargetsView {
     private final CategoryRenderer<Target> categoriesRenderer =
             new CategoryRenderer<Target>() {
                 @Override
-                public void renderElement(Element element, Target data) {
+                public void renderElement(Element element, final Target data) {
                     element.setInnerText(data.getName());
+
+                    element.addClassName(commandResources.getCss().categorySubElementHeader());
+
                     if (data.getRecipe() == null) {
                         element.getStyle().setProperty("color", "gray");
+                    } else {
+                        SpanElement categorySubElement = Document.get().createSpanElement();
+                        categorySubElement.setClassName(commandResources.getCss().buttonArea());
+                        element.appendChild(categorySubElement);
+
+                        SpanElement removeCommandButtonElement = Document.get().createSpanElement();
+                        categorySubElement.appendChild(removeCommandButtonElement);
+                        removeCommandButtonElement.appendChild(commandResources.removeCommandButton().getSvg().getElement());
+                        Event.sinkEvents(removeCommandButtonElement, Event.ONCLICK);
+                        Event.setEventListener(removeCommandButtonElement, new EventListener() {
+                            @Override
+                            public void onBrowserEvent(Event event) {
+                                if (Event.ONCLICK == event.getTypeInt()) {
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    delegate.onDeleteTarget(data);
+                                }
+                            }
+                        });
                     }
                 }
 
@@ -356,10 +371,6 @@ public class TargetsViewImpl extends Window implements TargetsView {
                     delegate.onTargetSelected(target);
                 }
             };
-
-    private native void log(String msg) /*-{
-        console.log(msg);
-    }-*/;
 
     @Override
     public void setTargetName(String targetName) {
@@ -419,6 +430,11 @@ public class TargetsViewImpl extends Window implements TargetsView {
     @Override
     public void enableCancelButton(boolean enable) {
         cancelButton.setEnabled(enable);
+    }
+
+    @Override
+    public void enableConnectButton(boolean enable) {
+        connectButton.setEnabled(enable);
     }
 
     @Override
