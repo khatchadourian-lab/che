@@ -13,8 +13,10 @@ package org.eclipse.che.plugin.machine.persistent;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
+import com.google.inject.name.Names;
 
 import org.eclipse.che.api.machine.server.spi.InstanceProvider;
+import org.eclipse.che.api.machine.server.terminal.MachineSpecificTerminalLauncher;
 
 /**
  * Provides bindings needed for persistent machine implementation usage.
@@ -36,5 +38,15 @@ public class PersistentMachineModule extends AbstractModule {
                         .implement(org.eclipse.che.api.machine.server.spi.InstanceProcess.class,
                                    org.eclipse.che.plugin.machine.persistent.PersistentMachineProcess.class)
                         .build(org.eclipse.che.plugin.machine.persistent.PersistentMachineFactory.class));
+
+        Multibinder<MachineSpecificTerminalLauncher> terminalLaunchers = Multibinder.newSetBinder(binder(),
+                                                                                                  MachineSpecificTerminalLauncher.class);
+        terminalLaunchers.addBinding().to(PersistentMachineTerminalLauncher.class);
+
+        bindConstant().annotatedWith(Names.named(PersistentMachineTerminalLauncher.TERMINAL_LAUNCH_COMMAND_PROPERTY))
+                      .to("~/che/terminal/che-websocket-terminal -addr :4411 -cmd /bin/bash -static ~/che/che-websocket-terminal/");
+
+        bindConstant().annotatedWith(Names.named(PersistentMachineTerminalLauncher.TERMINAL_LOCATION_PROPERTY))
+                      .to("~/che/terminal/");
     }
 }

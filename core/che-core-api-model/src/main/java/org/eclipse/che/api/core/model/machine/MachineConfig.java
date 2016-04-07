@@ -57,4 +57,9 @@ public interface MachineConfig {
      * Get predefined environment variables of machine.
      */
     Map<String, String> getEnvVariables();
+
+    /**
+     * Architecture of target machine. Default is 'linux_amd64'.
+     */
+    String getArchitecture();
 }

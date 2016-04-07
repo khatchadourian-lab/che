@@ -122,6 +122,11 @@ public class PersistentMachineInstance extends AbstractInstance {
         return instanceProcess;
     }
 
+    /**
+     * Not implemented.<p/>
+     *
+     * {@inheritDoc}
+     */
     @Override
     public InstanceKey saveToSnapshot(String owner) throws MachineException {
         throw new MachineException("Snapshot feature is unsupported for ssh machine implementation");
@@ -139,15 +144,30 @@ public class PersistentMachineInstance extends AbstractInstance {
         return null;// todo
     }
 
+    /**
+     * Not implemented.<p/>
+     *
+     * {@inheritDoc}
+     */
     @Override
     public String readFileContent(String filePath, int startFrom, int limit) throws MachineException {
         // todo
-        throw new MachineException("Copying is not implemented in ssh machine");
+        throw new MachineException("File content reading is not implemented in persistent machine implementation");
     }
 
+    /**
+     * Not implemented.<p/>
+     *
+     * {@inheritDoc}
+     */
     @Override
     public void copy(Instance sourceMachine, String sourcePath, String targetPath, boolean overwrite) throws MachineException {
         //todo
-        throw new MachineException("Copying is not implemented in ssh machine");
+        throw new MachineException("Copying is not implemented in persistent machine implementation");
+    }
+
+    @Override
+    public void copy(String sourcePath, String targetPath) throws MachineException {
+        sshClient.copy(sourcePath, targetPath);
     }
 }

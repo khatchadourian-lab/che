@@ -185,7 +185,8 @@ public class StackServiceTest {
                                                                                                  "9090/udp",
                                                                                                  "someprotocol",
                                                                                                  "/some/path")),
-                                                                Collections.singletonMap("key1", "value1"));
+                                                                Collections.singletonMap("key1", "value1"),
+                                                                null);
         EnvironmentImpl environment = new EnvironmentImpl(ENVIRONMENT_NAME, null, Collections.singletonList(machineConfig));
 
         WorkspaceConfigImpl workspaceConfig = WorkspaceConfigImpl.builder()

@@ -12,9 +12,11 @@ package org.eclipse.che.plugin.machine.persistent.ssh.jsch;
 
 import com.google.inject.assistedinject.Assisted;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.plugin.machine.persistent.ssh.SshMachineRecipe;
@@ -37,7 +39,7 @@ public class SshClient {
     private final int                 port;
     private final String              username;
     private final Map<String, String> envVars;
-    private final int                 testConnectionTimeout;
+    private final int                 connectionTimeout;
 
     private Session session;
 
@@ -45,9 +47,9 @@ public class SshClient {
     public SshClient(@Assisted SshMachineRecipe sshMachineRecipe,
                      @Assisted Map<String, String> envVars,
                      JSch jsch,
-                     @Named("machine.persistent.ssh.connection_timeout_ms") int testConnectionTimeoutMs) {
+                     @Named("machine.persistent.ssh.connection_timeout_ms") int connectionTimeoutMs) {
         this.envVars = envVars;
-        this.testConnectionTimeout = testConnectionTimeoutMs;
+        this.connectionTimeout = connectionTimeoutMs;
         this.user = JschUserInfoImpl.builder()
                                     .password(sshMachineRecipe.getPassword())
                                     .promptPassword(true)
@@ -67,7 +69,7 @@ public class SshClient {
             session.setUserInfo(user);
             // todo remember parent pid of out shell to be able to kill all processes on client stop
             if (!session.isConnected()) {
-                session.connect(testConnectionTimeout);
+                session.connect(connectionTimeout);
             }
         } catch (JSchException e) {
             throw new MachineException("Ssh machine creation failed because ssh of machine is inaccessible. Error: " +
@@ -100,6 +102,17 @@ public class SshClient {
         } catch (JSchException e) {
             throw new MachineException("Can't establish connection to perform command execution in ssh machine. Error: " +
                                        e.getLocalizedMessage(), e);
+        }
+    }
+
+    public void copy(String sourcePath, String targetPath) throws MachineException {
+        try {
+            ChannelSftp sftp = (ChannelSftp)session.openChannel("sftp");
+            sftp.connect(connectionTimeout);
+            // todo check that paths are absolute
+            sftp.put(sourcePath, targetPath);
+        } catch (JSchException | SftpException e) {
+            throw new MachineException("Sftp copying failed. Error: " + e.getLocalizedMessage());
         }
     }
 }

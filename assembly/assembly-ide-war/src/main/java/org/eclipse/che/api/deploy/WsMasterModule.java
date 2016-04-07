@@ -134,5 +134,7 @@ public class WsMasterModule extends AbstractModule {
         bind(org.eclipse.che.api.machine.server.WsAgentLauncher.class).to(org.eclipse.che.api.machine.server.WsAgentLauncherImpl.class);
 
         install(new org.eclipse.che.plugin.machine.persistent.PersistentMachineModule());
+
+        bind(org.eclipse.che.api.machine.server.terminal.MachineTerminalLauncher.class);
     }
 }
