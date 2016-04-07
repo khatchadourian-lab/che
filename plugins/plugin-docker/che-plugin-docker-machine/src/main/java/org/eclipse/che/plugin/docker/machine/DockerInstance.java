@@ -319,7 +319,7 @@ public class DockerInstance extends AbstractInstance {
      * {@inheritDoc}
      */
     @Override
-    public void copy(String sourcePath, String targetPath, boolean overwriteDirNonDir) throws MachineException {
+    public void copy(String sourcePath, String targetPath) throws MachineException {
         throw new MachineException("Unsupported operation for docker machine implementation");
     }
 
